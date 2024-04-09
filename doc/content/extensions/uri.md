@@ -13,10 +13,10 @@ The URI extension comes packaged with Plates but is not enabled by default, as i
 
 ~~~ php
 // Load URI extension using global variable
-$engine->loadExtension(new League\Plates\Extension\URI($_SERVER['PATH_INFO']));
+$engine->loadExtension(new DMJohnson\Contemplate\Extension\URI($_SERVER['PATH_INFO']));
 
 // Load URI extension using a HttpFoundation's request object
-$engine->loadExtension(new League\Plates\Extension\URI($request->getPathInfo()));
+$engine->loadExtension(new DMJohnson\Contemplate\Extension\URI($request->getPathInfo()));
 ~~~
 
 ## URI example

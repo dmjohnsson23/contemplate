@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Template\Folder;
+use DMJohnson\Contemplate\Template\Folder;
 use org\bovigo\vfs\vfsStream;
 
 class FolderTest extends \PHPUnit\Framework\TestCase

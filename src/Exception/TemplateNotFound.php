@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Plates\Exception;
+namespace DMJohnson\Contemplate\Exception;
 
 final class TemplateNotFound extends \LogicException
 {

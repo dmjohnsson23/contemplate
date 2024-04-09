@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Engine;
-use League\Plates\Template\Name;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Template\Name;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -32,14 +32,14 @@ class NameTest extends TestCase
 
     public function testCanCreateInstance()
     {
-        $this->assertInstanceOf('League\Plates\Template\Name', new Name($this->engine, 'template'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Name', new Name($this->engine, 'template'));
     }
 
     public function testGetEngine()
     {
         $name = new Name($this->engine, 'template');
 
-        $this->assertInstanceOf('League\Plates\Engine', $name->getEngine());
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $name->getEngine());
     }
 
     public function testGetName()
@@ -54,7 +54,7 @@ class NameTest extends TestCase
         $name = new Name($this->engine, 'folder::template');
         $folder = $name->getFolder();
 
-        $this->assertInstanceOf('League\Plates\Template\Folder', $folder);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Folder', $folder);
         $this->assertSame('folder', $name->getFolder()->getName());
     }
 

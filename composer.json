@@ -1,5 +1,5 @@
 {
-    "name": "league/plates",
+    "name": "dmjohnson/contemplate",
     "description": "Plates, the native PHP template system that's fast, easy to use and easy to extend.",
     "keywords": [
         "league",
@@ -8,9 +8,13 @@
         "templates",
         "views"
     ],
-    "homepage": "https://platesphp.com",
+    "homepage": "https://github.com/dmjohnsson23/contemplate",
     "license": "MIT",
     "authors" : [
+        {
+            "name": "Dominick Johnson",
+            "role": "Developer"
+        },
         {
             "name": "Jonathan Reinink",
             "email": "jonathan@reinink.ca",
@@ -32,12 +36,12 @@
     },
     "autoload": {
         "psr-4": {
-            "League\\Plates\\": "src"
+            "DMJohnson\\Contemplate\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "League\\Plates\\Tests\\": "tests"
+            "DMJohnson\\Contemplate\\Tests\\": "tests"
         }
     },
     "extra": {

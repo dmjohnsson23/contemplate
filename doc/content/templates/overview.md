@@ -10,7 +10,7 @@ Plates templates are very simple PHP objects. Generally you'll want to create th
 
 ~~~ php
 // Create new Plates instance
-$templates = new League\Plates\Engine('/path/to/templates');
+$templates = new DMJohnson\Contemplate\Engine('/path/to/templates');
 
 // Render a template in a subdirectory
 echo $templates->render('partials/header');
@@ -27,10 +27,10 @@ It's also possible to create templates manually. The only dependency they requir
 
 ~~~ php
 // Create new Plates instance
-$templates = new League\Plates\Engine('/path/to/templates');
+$templates = new DMJohnson\Contemplate\Engine('/path/to/templates');
 
 // Create a new template
-$template = new League\Plates\Template\Template($templates, 'profile');
+$template = new DMJohnson\Contemplate\Template\Template($templates, 'profile');
 
 // Render the template
 echo $template->render(['name' => 'Jonathan']);

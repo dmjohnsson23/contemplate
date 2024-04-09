@@ -1,62 +1,69 @@
-Plates
-======
+Contemplate
+===========
 
-[![Maintainer](http://img.shields.io/badge/maintainer-@ragboyjr-blue.svg?style=flat-square)](https://twitter.com/ragboyjr)
-[![Source Code](http://img.shields.io/badge/source-league/plates-blue.svg?style=flat-square)](https://github.com/thephpleague/plates)
-[![Latest Version](https://img.shields.io/github/release/thephpleague/plates.svg?style=flat-square)](https://github.com/thephpleague/plates/releases)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/thephpleague/plates/php.yml?style=flat-square)](https://github.com/thephpleague/plates/actions?query=workflow%3APHP+branch%3Av3)
-[![Quality Score](https://img.shields.io/scrutinizer/g/thephpleague/plates.svg?style=flat-square)](https://scrutinizer-ci.com/g/thephpleague/plates)
-[![Total Downloads](https://img.shields.io/packagist/dt/league/plates.svg?style=flat-square)](https://packagist.org/packages/league/plates)
+"Contemplate" is short for "Controllers and Templates". It is somewhat more than a mere templating library, but a great deal less than a full web framework.
 
-Plates is a native PHP template system that's fast, easy to use and easy to extend. It's inspired by the excellent [Twig](http://twig.sensiolabs.org/) template engine and strives to bring modern template language functionality to native PHP templates. Plates is designed for developers who prefer to use native PHP templates over compiled template languages, such as Twig or Smarty.
+This is an extended fork of [Plates](https://github.com/thephpleague/plates) that adds support for additional functionality, such as:
 
-### Highlights
+* Loading controllers (or, any arbitrary function or object) using the same loader used to load templates
+* Loading static resources (but *not* public web assets...for now) using the same loader used to load templates
+* Name-based associations between templates, controllers, and resources
 
-- Native PHP templates, no new [syntax](https://platesphp.com/templates/syntax/) to learn
-- Plates is a template system, not a template language
-- Plates encourages the use of existing PHP functions
-- Increase code reuse with template [layouts](https://platesphp.com/templates/layouts/) and [inheritance](https://platesphp.com/templates/inheritance/)
-- Template [folders](https://platesphp.com/engine/folders/) for grouping templates into namespaces
-- [Data](https://platesphp.com/templates/data/#preassigned-and-shared-data) sharing across templates
-- Preassign [data](https://platesphp.com/templates/data/#preassigned-and-shared-data) to specific templates
-- Built-in [escaping](https://platesphp.com/templates/escaping/) helpers
-- Easy to extend using [functions](https://platesphp.com/engine/functions/) and [extensions](https://platesphp.com/engine/extensions/)
-- Framework-agnostic, will work with any project
-- Decoupled design makes templates easy to test
-- Composer ready and PSR-2 compliant
-
-## Installation
-
-Plates is available via Composer:
-
-```
-composer require league/plates
-```
+Plates is a very handy little project, but doesn't appear to be receiving new features or responding to pull requests. Contemplate is a drop-in replacement for Plates; you should be able to simply change the import, and everything should "just work". You can then add additional features over time using Contemplate's extended functionality.
 
 ## Documentation
 
-Full documentation can be found at [platesphp.com](https://platesphp.com/).
+The original documentation for Plates can be found at [platesphp.com](https://platesphp.com/). Additional documentation for Contemplate-specific features will be forthcoming, but a brief overview of the differences can be found below.
 
-## Testing
+First, `Template` has been generalized to `Resolvable`. `Resolvable` can be used as a base class for loading other types of resources (controllers or static resources). `Template` is a subclass of `Resolvable`.
 
-```bash
-composer test
+Second, many methods now take an optional `type` parameter. This parameter is a string used to specify which type of resource to resolve. For example, you may have a directory structure like this for your templates and other resources:
+
+```
+app
++-- index.get.php
++-- index.tpl.php
++-- some_form.get.php
++-- some_form.post.php
++-- some_form.tpl.php
++-- some_article.get.php
++-- some_article.tpl.php
++-- some_article.md
 ```
 
-## Contributing
+This structure represents a theoretical site with three pages: index, some_form, and some_article. However, each of these pages has multiple different resolvable resources associated with it. All three have a template (`x.tpl.php`) and a controller for GET requests (`x.get.php`). The form has an additional controller for POST requests (`some_form.post.php`), and the article contains some content in a markdown document (`some_article.md`).
 
-Please see [CONTRIBUTING](https://github.com/thephpleague/plates/blob/master/CONTRIBUTING.md) for details.
+You can associate these different types of resolvable objects with different file extensions:
 
-## Security
+```php
+// The default file extension for unknown or unspecified types
+$engine->setFileExtension('php');
+// File extensions for special built-in types
+// Using these types is optional, but provides some additional features for convenience
+$engine->setFileExtension('tpl.php', Resolvable::TYPE_TEMPLATE);
+$engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_GET);
+$engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_POST);
+// Custom extensions for custom types
+// These names are arbitrary--you can use whatever makes sense for your application
+$engine->setFileExtension('md', 'markdown');
+```
 
-If you discover any security related issues, please email ragboyjr@icloud.com instead of using the issue tracker.
+Then, when interacting with the engine to resolve objects, you can specify the relevant type either implicitly or explicitly to resolve different objects:
 
-## Credits
-
-- [RJ Garcia](https://github.com/ragboyjr) (Current Maintainer)
-- [Jonathan Reinink](https://github.com/reinink) (Original Author)
-- [All Contributors](https://github.com/thephpleague/plates/contributors)
+```php
+// Templates implicitly use `Resolvable::TYPE_TEMPLATE`
+$engine->make('index');
+// Controllers (a resolvable type unique to Contemplate) can be called implicitly using the detected HTTP method
+$engine->callController('some_form');
+// Or explicitly using a built-in type
+$engine->callController('some_form', Resolvable::TYPE_CONTROLLER_GET);
+// Or explicitly using a custom type
+$engine->callController('some_form', 'delegated_function');
+// Custom types are specified via the type parameter
+$engine->path('some_article', 'markdown');
+// `import` can be used to get values returned from arbitrary PHP scripts
+$form_handler_object = $engine->import('some_form', type:'form_handler_object');
+```
 
 ## License
 

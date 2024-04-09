@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Extension;
+namespace DMJohnson\Contemplate\Tests\Extension;
 
-use League\Plates\Engine;
-use League\Plates\Extension\Asset;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Extension\Asset;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -18,9 +18,9 @@ class AssetTest extends TestCase
 
     public function testCanCreateInstance()
     {
-        $this->assertInstanceOf('League\Plates\Extension\Asset', new Asset(vfsStream::url('assets')));
-        $this->assertInstanceOf('League\Plates\Extension\Asset', new Asset(vfsStream::url('assets'), true));
-        $this->assertInstanceOf('League\Plates\Extension\Asset', new Asset(vfsStream::url('assets'), false));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Extension\Asset', new Asset(vfsStream::url('assets')));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Extension\Asset', new Asset(vfsStream::url('assets'), true));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Extension\Asset', new Asset(vfsStream::url('assets'), false));
     }
 
     public function testRegister()

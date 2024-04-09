@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Plates\Extension;
+namespace DMJohnson\Contemplate\Extension;
 
-use League\Plates\Engine;
+use DMJohnson\Contemplate\Engine;
 
 /**
  * A common interface for extensions.

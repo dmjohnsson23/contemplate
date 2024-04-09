@@ -12,7 +12,7 @@ While [extensions]({{< relref "engine/extensions.md" >}}) are awesome for adding
 
 ~~~ php
 // Create new Plates engine
-$templates = new \League\Plates\Engine('/path/to/templates');
+$templates = new \DMJohnson\Contemplate\Engine('/path/to/templates');
 
 // Register a one-off function
 $templates->registerFunction('uppercase', function ($string) {

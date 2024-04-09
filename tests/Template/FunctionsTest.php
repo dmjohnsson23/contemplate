@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Template\Functions;
+use DMJohnson\Contemplate\Template\Functions;
 use PHPUnit\Framework\TestCase;
 
 class FunctionsTest extends TestCase

@@ -12,7 +12,7 @@ Plates does not enforce a specific template file extension. By default it assume
 
 ~~~ php
 // Create new engine and set the default file extension to ".tpl"
-$template = new League\Plates\Engine('/path/to/templates', 'tpl');
+$template = new DMJohnson\Contemplate\Engine('/path/to/templates', 'tpl');
 ~~~
 
 ## Setter method

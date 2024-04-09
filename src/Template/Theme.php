@@ -1,6 +1,6 @@
 <?php
 
-namespace League\Plates\Template;
+namespace DMJohnson\Contemplate\Template;
 
 final class Theme
 {

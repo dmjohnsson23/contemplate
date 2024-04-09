@@ -14,7 +14,7 @@ Assigning data is done from within your application code, such as a controller. 
 
 ~~~ php
 // Create new Plates instance
-$templates = new League\Plates\Engine('/path/to/templates');
+$templates = new DMJohnson\Contemplate\Engine('/path/to/templates');
 
 // Assign via the engine's render method
 echo $templates->render('profile', ['name' => 'Jonathan']);

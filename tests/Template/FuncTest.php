@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Engine;
-use League\Plates\Extension\ExtensionInterface;
-use League\Plates\Template\Func;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Template\Func;
 use PHPUnit\Framework\TestCase;
 
 class FuncTest extends TestCase

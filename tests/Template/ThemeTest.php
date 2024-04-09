@@ -1,9 +1,9 @@
 <?php
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Engine;
-use League\Plates\Template\Theme;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Template\Theme;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -89,7 +89,7 @@ final class ThemeTest extends TestCase
     }
 
     private function given_an_engine_is_created_with_theme(Theme $theme) {
-        $this->engine = \League\Plates\Engine::fromTheme($theme);
+        $this->engine = \DMJohnson\Contemplate\Engine::fromTheme($theme);
     }
 
     private function when_a_theme_is_created_like(callable $fn) {

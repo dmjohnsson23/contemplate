@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Plates\Tests;
+namespace DMJohnson\Contemplate\Tests;
 
-use League\Plates\Engine;
+use DMJohnson\Contemplate\Engine;
 use org\bovigo\vfs\vfsStream;
 
 class EngineTest extends \PHPUnit\Framework\TestCase
@@ -18,18 +18,18 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
     public function testCanCreateInstance()
     {
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine);
     }
 
     public function testSetDirectory()
     {
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->setDirectory(vfsStream::url('templates')));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setDirectory(vfsStream::url('templates')));
         $this->assertSame(vfsStream::url('templates'), $this->engine->getDirectory());
     }
 
     public function testSetNullDirectory()
     {
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->setDirectory(null));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setDirectory(null));
         $this->assertNull($this->engine->getDirectory());
     }
 
@@ -47,13 +47,13 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
     public function testSetFileExtension()
     {
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->setFileExtension('tpl'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setFileExtension('tpl'));
         $this->assertSame('tpl', $this->engine->getFileExtension());
     }
 
     public function testSetNullFileExtension()
     {
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->setFileExtension(null));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setFileExtension(null));
         $this->assertNull($this->engine->getFileExtension());
     }
 
@@ -72,7 +72,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->addFolder('folder', vfsStream::url('templates/folder')));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->addFolder('folder', vfsStream::url('templates/folder')));
         $this->assertSame('vfs://templates/folder', $this->engine->getFolders()->get('folder')->getPath());
     }
 
@@ -103,13 +103,13 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
         $this->engine->addFolder('folder', vfsStream::url('templates/folder'));
         $this->assertTrue($this->engine->getFolders()->exists('folder'));
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->removeFolder('folder'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->removeFolder('folder'));
         $this->assertFalse($this->engine->getFolders()->exists('folder'));
     }
 
     public function testGetFolders()
     {
-        $this->assertInstanceOf('League\Plates\Template\Folders', $this->engine->getFolders());
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Folders', $this->engine->getFolders());
     }
 
     public function testAddData()
@@ -142,7 +142,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->engine->registerFunction('uppercase', 'strtoupper');
-        $this->assertInstanceOf('League\Plates\Template\Func', $this->engine->getFunction('uppercase'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Func', $this->engine->getFunction('uppercase'));
         $this->assertSame('strtoupper', $this->engine->getFunction('uppercase')->getCallback());
     }
 
@@ -166,7 +166,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         $this->engine->registerFunction('uppercase', 'strtoupper');
         $function = $this->engine->getFunction('uppercase');
 
-        $this->assertInstanceOf('League\Plates\Template\Func', $function);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Func', $function);
         $this->assertSame('uppercase', $function->getName());
         $this->assertSame('strtoupper', $function->getCallback());
     }
@@ -192,7 +192,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     public function testLoadExtension()
     {
         $this->assertFalse($this->engine->doesFunctionExist('uri'));
-        $this->assertInstanceOf('League\Plates\Engine', $this->engine->loadExtension(new \League\Plates\Extension\URI('')));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->loadExtension(new \DMJohnson\Contemplate\Extension\URI('')));
         $this->assertTrue($this->engine->doesFunctionExist('uri'));
     }
 
@@ -201,11 +201,11 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($this->engine->doesFunctionExist('uri'));
         $this->assertFalse($this->engine->doesFunctionExist('asset'));
         $this->assertInstanceOf(
-            'League\Plates\Engine',
+            'DMJohnson\Contemplate\Engine',
             $this->engine->loadExtensions(
                 array(
-                    new \League\Plates\Extension\URI(''),
-                    new \League\Plates\Extension\Asset('public'),
+                    new \DMJohnson\Contemplate\Extension\URI(''),
+                    new \DMJohnson\Contemplate\Extension\Asset('public'),
                 )
             )
         );
@@ -239,7 +239,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertInstanceOf('League\Plates\Template\Template', $this->engine->make('template'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Template', $this->engine->make('template'));
     }
 
     public function testMakeTemplateWithData()
@@ -251,7 +251,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         );
 
         $template = $this->engine->make('template', array('name' => 'Jonathan'));
-        $this->assertInstanceOf('League\Plates\Template\Template', $template);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Template', $template);
         $this->assertSame(array('name' => 'Jonathan'), $template->data());
     }
 

@@ -15,7 +15,7 @@ Themes provide an alternative to template path resolution that allow for a holis
 Given an engine configuration like:
 
 ```php
-use League\Plates\{Engine, Template\Theme};
+use DMJohnson\Contemplate\{Engine, Template\Theme};
 
 $plates = Engine::fromTheme(Theme::hierarchy([
     Theme::new('/templates/main', 'Main'), // parent
@@ -59,7 +59,7 @@ The fallback functionality is a bit different however since with folders, it's *
 
 ## Additional Customization
 
-This functionality is powered by the `League\Plates\Template\ResolveTemplatePath` interface. If you'd prefer a more complex or specific path resolution, you can just implement your own and assign it to the engine instance with:
+This functionality is powered by the `DMJohnson\Contemplate\Template\ResolveTemplatePath` interface. If you'd prefer a more complex or specific path resolution, you can just implement your own and assign it to the engine instance with:
 
 ```php
 $plates = Engine::withResolveTemplatePath(new MyCustomResolveTemplatePath());

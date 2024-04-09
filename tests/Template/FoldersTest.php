@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Template\Folders;
+use DMJohnson\Contemplate\Template\Folders;
 use org\bovigo\vfs\vfsStream;
 
 class FoldersTest extends \PHPUnit\Framework\TestCase
@@ -62,7 +62,7 @@ class FoldersTest extends \PHPUnit\Framework\TestCase
     public function testGetFolder()
     {
         $this->folders->add('name', vfsStream::url('templates'));
-        $this->assertInstanceOf('League\Plates\Template\Folder', $this->folders->get('name'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Folder', $this->folders->get('name'));
         $this->assertSame(vfsStream::url('templates'), $this->folders->get('name')->getPath());
     }
 
@@ -70,7 +70,7 @@ class FoldersTest extends \PHPUnit\Framework\TestCase
     {
         // The template folder "name" was not found.
         $this->expectException(\LogicException::class);
-        $this->assertInstanceOf('League\Plates\Template\Folder', $this->folders->get('name'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Folder', $this->folders->get('name'));
     }
 
     public function testFolderExists()

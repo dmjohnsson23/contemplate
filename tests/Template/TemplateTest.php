@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Engine;
-use League\Plates\Template\Template;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Template\Template;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 

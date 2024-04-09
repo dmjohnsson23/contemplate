@@ -6,13 +6,13 @@ parent = "engine"
 weight = 5
 +++
 
-Creating extensions couldn't be easier, and can really make Plates sing for your specific project. Start by creating a class that implements `\League\Plates\Extension\ExtensionInterface`. Next, register your template [functions]({{< relref "engine/functions.md" >}}) within a `register()` method.
+Creating extensions couldn't be easier, and can really make Plates sing for your specific project. Start by creating a class that implements `\DMJohnson\Contemplate\Extension\ExtensionInterface`. Next, register your template [functions]({{< relref "engine/functions.md" >}}) within a `register()` method.
 
 ## Simple extensions example
 
 ~~~ php
-use League\Plates\Engine;
-use League\Plates\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Extension\ExtensionInterface;
 
 class ChangeCase implements ExtensionInterface
 {
@@ -51,8 +51,8 @@ They can also be used in a [batch]({{< relref "templates/functions.md#batch-func
 Alternatively, you may choose to expose the entire extension object to the template using a single function. This can make your templates more legible and also reduce the chance of conflicts with other extensions.
 
 ~~~ php
-use League\Plates\Engine;
-use League\Plates\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Extension\ExtensionInterface;
 
 class ChangeCase implements ExtensionInterface
 {
@@ -97,8 +97,8 @@ $engine->loadExtension(new ChangeCase());
 It may be desirable to access the `engine` or `template` objects from within your extension. Plates makes both of these objects available to you. The engine is automatically passed to the `register()` method, and the template is assigned as a parameter on each function call.
 
 ~~~ php
-use League\Plates\Engine;
-use League\Plates\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Extension\ExtensionInterface;
 
 class MyExtension implements ExtensionInterface
 {

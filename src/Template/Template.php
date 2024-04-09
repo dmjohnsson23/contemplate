@@ -1,17 +1,17 @@
 <?php
 
-namespace League\Plates\Template;
+namespace DMJohnson\Contemplate\Template;
 
 use Exception;
-use League\Plates\Engine;
-use League\Plates\Exception\TemplateNotFound;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Exception\TemplateNotFound;
 use LogicException;
 use Throwable;
 
 /**
  * Container which holds template data and provides access to template functions.
  */
-class Template
+class Template extends Resolvable
 {
     const SECTION_MODE_REWRITE = 1;
     const SECTION_MODE_PREPEND = 2;
@@ -73,30 +73,6 @@ class Template
     protected $layoutData;
 
     /**
-     * Create new Template instance.
-     * @param Engine $engine
-     * @param string $name
-     */
-    public function __construct(Engine $engine, $name)
-    {
-        $this->engine = $engine;
-        $this->name = new Name($engine, $name);
-
-        $this->data($this->engine->getData($name));
-    }
-
-    /**
-     * Magic method used to call extension functions.
-     * @param  string $name
-     * @param  array  $arguments
-     * @return mixed
-     */
-    public function __call($name, $arguments)
-    {
-        return $this->engine->getFunction($name)->call($this, $arguments);
-    }
-
-    /**
      * Alias for render() method.
      * @throws \Throwable
      * @throws \Exception
@@ -119,33 +95,6 @@ class Template
         }
 
         $this->data = array_merge($this->data, $data);
-    }
-
-    /**
-     * Check if the template exists.
-     * @return boolean
-     */
-    public function exists()
-    {
-        try {
-            ($this->engine->getResolveTemplatePath())($this->name);
-            return true;
-        } catch (TemplateNotFound $e) {
-            return false;
-        }
-    }
-
-    /**
-     * Get the template path.
-     * @return string
-     */
-    public function path()
-    {
-        try {
-            return ($this->engine->getResolveTemplatePath())($this->name);
-        } catch (TemplateNotFound $e) {
-            return $e->paths()[0];
-        }
     }
 
     /**

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Extension;
+namespace DMJohnson\Contemplate\Tests\Extension;
 
-use League\Plates\Engine;
-use League\Plates\Extension\URI;
+use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Extension\URI;
 use PHPUnit\Framework\TestCase;
 
 class URITest extends TestCase
@@ -19,7 +19,7 @@ class URITest extends TestCase
 
     public function testCanCreateInstance()
     {
-        $this->assertInstanceOf('League\Plates\Extension\URI', $this->extension);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Extension\URI', $this->extension);
     }
 
     public function testRegister()

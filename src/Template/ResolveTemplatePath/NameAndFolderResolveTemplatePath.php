@@ -1,10 +1,10 @@
 <?php
 
-namespace League\Plates\Template\ResolveTemplatePath;
+namespace DMJohnson\Contemplate\Template\ResolveTemplatePath;
 
-use League\Plates\Exception\TemplateNotFound;
-use League\Plates\Template\Name;
-use League\Plates\Template\ResolveTemplatePath;
+use DMJohnson\Contemplate\Exception\TemplateNotFound;
+use DMJohnson\Contemplate\Template\Name;
+use DMJohnson\Contemplate\Template\ResolveTemplatePath;
 
 /** Resolves the path from the logic in the Name class which resolves via folder lookup, and then the default directory */
 final class NameAndFolderResolveTemplatePath implements ResolveTemplatePath

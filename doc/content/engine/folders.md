@@ -14,7 +14,7 @@ To create folders, use the `addFolder()` method:
 
 ~~~ php
 // Create new Plates instance
-$templates = new League\Plates\Engine();
+$templates = new DMJohnson\Contemplate\Engine();
 
 // Add folders
 $templates->addFolder('admin', '/path/to/admin/templates');
@@ -41,7 +41,7 @@ When enabled, if a folder template is missing, Plates will automatically fallbac
 
 ~~~ php
 // Create new Plates engine
-$templates = new \League\Plates\Engine('/path/to/default/theme');
+$templates = new \DMJohnson\Contemplate\Engine('/path/to/default/theme');
 
 // Add themes
 $templates->addFolder('theme1', '/path/to/theme/1', true);

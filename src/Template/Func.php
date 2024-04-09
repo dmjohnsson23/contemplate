@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Plates\Template;
+namespace DMJohnson\Contemplate\Template;
 
-use League\Plates\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Extension\ExtensionInterface;
 use LogicException;
 
 /**

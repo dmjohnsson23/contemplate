@@ -1,18 +1,19 @@
 <?php
 
-namespace League\Plates;
+namespace DMJohnson\Contemplate;
 
-use League\Plates\Extension\ExtensionInterface;
-use League\Plates\Template\Data;
-use League\Plates\Template\Directory;
-use League\Plates\Template\FileExtension;
-use League\Plates\Template\Folders;
-use League\Plates\Template\Func;
-use League\Plates\Template\Functions;
-use League\Plates\Template\Name;
-use League\Plates\Template\ResolveTemplatePath;
-use League\Plates\Template\Template;
-use League\Plates\Template\Theme;
+use DMJohnson\Contemplate\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Template\Data;
+use DMJohnson\Contemplate\Template\Directory;
+use DMJohnson\Contemplate\Template\FileExtension;
+use DMJohnson\Contemplate\Template\Folders;
+use DMJohnson\Contemplate\Template\Func;
+use DMJohnson\Contemplate\Template\Functions;
+use DMJohnson\Contemplate\Template\Name;
+use DMJohnson\Contemplate\Template\Resolvable;
+use DMJohnson\Contemplate\Template\ResolveTemplatePath;
+use DMJohnson\Contemplate\Template\Template;
+use DMJohnson\Contemplate\Template\Theme;
 
 /**
  * Template API and environment settings storage.
@@ -109,22 +110,28 @@ class Engine
     /**
      * Set the template file extension.
      * @param  string|null $fileExtension Pass null to manually set it.
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return Engine
      */
-    public function setFileExtension($fileExtension)
+    public function setFileExtension($fileExtension, $type=null)
     {
-        $this->fileExtension->set($fileExtension);
+        $this->fileExtension->set($fileExtension, $type);
 
         return $this;
     }
 
     /**
      * Get the template file extension.
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return string
      */
-    public function getFileExtension()
+    public function getFileExtension($type=null)
     {
-        return $this->fileExtension->get();
+        return $this->fileExtension->get($type);
     }
 
     /**
@@ -257,13 +264,32 @@ class Engine
     }
 
     /**
+     * Resolve a name to a Resolvable
+     * 
+     * @template T of Resolvable
+     * @param string $name
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
+     * @param class-string<T> $class The `Resolvable` subclass to use to resolve.
+     * @return T
+     */
+    public function resolve($name, $type = null, $class = Resolvable::class)
+    {
+        return new $class($name, $type);
+    }
+
+    /**
      * Get a template path.
      * @param  string $name
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return string
      */
-    public function path($name)
+    public function path($name, $type = null)
     {
-        $name = new Name($this, $name);
+        $name = new Name($this, $name, $type);
 
         return $name->getPath();
     }
@@ -271,11 +297,14 @@ class Engine
     /**
      * Check if a template exists.
      * @param  string  $name
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return boolean
      */
-    public function exists($name)
+    public function exists($name, $type = null)
     {
-        $name = new Name($this, $name);
+        $name = new Name($this, $name, $type);
 
         return $name->doesPathExist();
     }
@@ -284,11 +313,14 @@ class Engine
      * Create a new template.
      * @param  string   $name
      * @param  array    $data
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return Template
      */
-    public function make($name, array $data = array())
+    public function make($name, array $data = array(), $type = Resolvable::TYPE_TEMPLATE)
     {
-        $template = new Template($this, $name);
+        $template = new Template($this, $name, $type);
         $template->data($data);
         return $template;
     }
@@ -297,10 +329,27 @@ class Engine
      * Create a new template and render it.
      * @param  string $name
      * @param  array  $data
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return string
      */
-    public function render($name, array $data = array())
+    public function render($name, array $data = array(), $type = Resolvable::TYPE_TEMPLATE)
     {
-        return $this->make($name)->render($data);
+        return $this->make($name, $data, $type)->render();
+    }
+
+    /**
+     * Import and return a value from a PHP script
+     * @param  string $name
+     * @param  array  $data
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
+     * @return mixed
+     */
+    public function import($name, array $data=[], $type = null)
+    {
+        return $this->resolve($name, $type)->import($data);
     }
 }

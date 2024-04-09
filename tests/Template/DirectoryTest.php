@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Template\Directory;
+use DMJohnson\Contemplate\Template\Directory;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -21,18 +21,18 @@ class DirectoryTest extends TestCase
 
     public function testCanCreateInstance()
     {
-        $this->assertInstanceOf('League\Plates\Template\Directory', $this->directory);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Directory', $this->directory);
     }
 
     public function testSetDirectory()
     {
-        $this->assertInstanceOf('League\Plates\Template\Directory', $this->directory->set(vfsStream::url('templates')));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Directory', $this->directory->set(vfsStream::url('templates')));
         $this->assertSame($this->directory->get(), vfsStream::url('templates'));
     }
 
     public function testSetNullDirectory()
     {
-        $this->assertInstanceOf('League\Plates\Template\Directory', $this->directory->set(null));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Directory', $this->directory->set(null));
         $this->assertNull($this->directory->get());
     }
 

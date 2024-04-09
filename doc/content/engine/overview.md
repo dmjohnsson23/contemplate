@@ -13,13 +13,13 @@ Plates uses a central object called the `Engine`, which is used to store the env
 
 ~~~ php
 // Create new Plates engine
-$templates = new League\Plates\Engine('/path/to/templates');
+$templates = new DMJohnson\Contemplate\Engine('/path/to/templates');
 
 // Add any additional folders
 $templates->addFolder('emails', '/path/to/emails');
 
 // Load any additional extensions
-$templates->loadExtension(new League\Plates\Extension\Asset('/path/to/public'));
+$templates->loadExtension(new DMJohnson\Contemplate\Extension\Asset('/path/to/public'));
 
 // Create a new template
 $template = $templates->make('emails::welcome');
@@ -34,7 +34,7 @@ class Controller
 {
     private $templates;
 
-    public function __construct(League\Plates\Engine $templates)
+    public function __construct(DMJohnson\Contemplate\Engine $templates)
     {
         $this->templates = $templates;
     }

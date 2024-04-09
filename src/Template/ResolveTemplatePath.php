@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Plates\Template;
+namespace DMJohnson\Contemplate\Template;
 
-use League\Plates\Exception\TemplateNotFound;
+use DMJohnson\Contemplate\Exception\TemplateNotFound;
 
 interface ResolveTemplatePath
 {

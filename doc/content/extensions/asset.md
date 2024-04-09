@@ -13,7 +13,7 @@ The asset extension comes packaged with Plates but is not enabled by default, as
 
 ~~~ php
 // Load asset extension
-$engine->loadExtension(new League\Plates\Extension\Asset('/path/to/public/assets/', true));
+$engine->loadExtension(new DMJohnson\Contemplate\Extension\Asset('/path/to/public/assets/', true));
 ~~~
 
 The first constructor parameter is the file system path of the assets directory. The second is an optional `boolean` parameter that if set to true uses the filename caching method (ie. `file.1373577602.css`) instead of the default query string method (ie. `file.css?v=1373577602`).

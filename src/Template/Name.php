@@ -1,8 +1,8 @@
 <?php
 
-namespace League\Plates\Template;
+namespace DMJohnson\Contemplate\Template;
 
-use League\Plates\Engine;
+use DMJohnson\Contemplate\Engine;
 use LogicException;
 
 /**
@@ -38,11 +38,14 @@ class Name
      * Create a new Name instance.
      * @param Engine $engine
      * @param string $name
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      */
-    public function __construct(Engine $engine, $name)
+    public function __construct(Engine $engine, $name, $type=null)
     {
         $this->setEngine($engine);
-        $this->setName($name);
+        $this->setName($name, $type);
     }
 
     /**
@@ -69,19 +72,22 @@ class Name
     /**
      * Set the original name and parse it.
      * @param  string $name
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return Name
      */
-    public function setName($name)
+    public function setName($name, $type=null)
     {
         $this->name = $name;
 
         $parts = explode('::', $this->name);
 
         if (count($parts) === 1) {
-            $this->setFile($parts[0]);
+            $this->setFile($parts[0], $type);
         } elseif (count($parts) === 2) {
             $this->setFolder($parts[0]);
-            $this->setFile($parts[1]);
+            $this->setFile($parts[1], $type);
         } else {
             throw new LogicException(
                 'The template name "' . $this->name . '" is not valid. ' .
@@ -125,9 +131,12 @@ class Name
     /**
      * Set the parsed template file.
      * @param  string $file
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
      * @return Name
      */
-    public function setFile($file)
+    public function setFile($file, $type=null)
     {
         if ($file === '') {
             throw new LogicException(
@@ -138,8 +147,8 @@ class Name
 
         $this->file = $file;
 
-        if (!is_null($this->engine->getFileExtension())) {
-            $this->file .= '.' . $this->engine->getFileExtension();
+        if (!is_null($this->engine->getFileExtension($type))) {
+            $this->file .= '.' . $this->engine->getFileExtension($type);
         }
 
         return $this;

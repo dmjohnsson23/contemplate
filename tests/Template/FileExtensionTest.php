@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Template\FileExtension;
+use DMJohnson\Contemplate\Template\FileExtension;
 use PHPUnit\Framework\TestCase;
 
 class FileExtensionTest extends TestCase
@@ -18,18 +18,18 @@ class FileExtensionTest extends TestCase
 
     public function testCanCreateInstance()
     {
-        $this->assertInstanceOf('League\Plates\Template\FileExtension', $this->fileExtension);
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\FileExtension', $this->fileExtension);
     }
 
     public function testSetFileExtension()
     {
-        $this->assertInstanceOf('League\Plates\Template\FileExtension', $this->fileExtension->set('tpl'));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\FileExtension', $this->fileExtension->set('tpl'));
         $this->assertSame('tpl', $this->fileExtension->get());
     }
 
     public function testSetNullFileExtension()
     {
-        $this->assertInstanceOf('League\Plates\Template\FileExtension', $this->fileExtension->set(null));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\FileExtension', $this->fileExtension->set(null));
         $this->assertNull($this->fileExtension->get());
     }
 

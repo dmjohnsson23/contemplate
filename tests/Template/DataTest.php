@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace League\Plates\Tests\Template;
+namespace DMJohnson\Contemplate\Tests\Template;
 
-use League\Plates\Template\Data;
+use DMJohnson\Contemplate\Template\Data;
 use PHPUnit\Framework\TestCase;
 
 class DataTest extends TestCase

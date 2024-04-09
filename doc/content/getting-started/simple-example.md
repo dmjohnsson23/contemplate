@@ -19,7 +19,7 @@ Here is a simple example of how to use Plates. We will assume the following dire
 
 ~~~ php
 // Create new Plates instance
-$templates = new League\Plates\Engine('/path/to/templates');
+$templates = new DMJohnson\Contemplate\Engine('/path/to/templates');
 
 // Render a template
 echo $templates->render('profile', ['name' => 'Jonathan']);
