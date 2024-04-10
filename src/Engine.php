@@ -276,7 +276,7 @@ class Engine
      */
     public function resolve($name, $type = null, $class = Resolvable::class)
     {
-        return new $class($name, $type);
+        return new $class($this, $name, $type);
     }
 
     /**

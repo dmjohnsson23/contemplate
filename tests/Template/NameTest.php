@@ -6,6 +6,7 @@ namespace DMJohnson\Contemplate\Tests\Template;
 
 use DMJohnson\Contemplate\Engine;
 use DMJohnson\Contemplate\Template\Name;
+use DMJohnson\Contemplate\Template\Resolvable;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -161,5 +162,16 @@ class NameTest extends TestCase
         $this->assertSame('template.php', $name->getName());
         $this->assertNull($name->getFolder());
         $this->assertSame('template.php', $name->getFile());
+    }
+
+    public function testParseWithTypedFileExtension()
+    {
+        $this->engine->setFileExtension('tpl', Resolvable::TYPE_TEMPLATE);
+
+        $name = new Name($this->engine, 'template', Resolvable::TYPE_TEMPLATE);
+
+        $this->assertSame('template', $name->getName());
+        $this->assertNull($name->getFolder());
+        $this->assertSame('template.tpl', $name->getFile());
     }
 }

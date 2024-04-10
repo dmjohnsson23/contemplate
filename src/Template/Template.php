@@ -73,6 +73,21 @@ class Template extends Resolvable
     protected $layoutData;
 
     /**
+     * Create new Template instance.
+     * @param Engine $engine
+     * @param string $name
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
+     */
+    public function __construct(Engine $engine, $name, $type=null)
+    {
+        parent::__construct($engine, $name, $type);
+
+        $this->data($this->engine->getData($name));
+    }
+
+    /**
      * Alias for render() method.
      * @throws \Throwable
      * @throws \Exception

@@ -89,11 +89,11 @@ class Func
 
     /**
      * Call the function.
-     * @param  Template $template
+     * @param  Resolvable $template
      * @param  array    $arguments
      * @return mixed
      */
-    public function call(Template $template = null, $arguments = array())
+    public function call(Resolvable $template = null, $arguments = array())
     {
         if (is_array($this->callback) and
             isset($this->callback[0]) and

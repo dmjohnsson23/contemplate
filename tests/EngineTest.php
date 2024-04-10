@@ -3,6 +3,7 @@
 namespace DMJohnson\Contemplate\Tests;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Template\Template;
 use org\bovigo\vfs\vfsStream;
 
 class EngineTest extends \PHPUnit\Framework\TestCase
@@ -211,6 +212,27 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         );
         $this->assertTrue($this->engine->doesFunctionExist('uri'));
         $this->assertTrue($this->engine->doesFunctionExist('asset'));
+    }
+
+    public function testResolveAsGenericResolvable()
+    {
+        vfsStream::create(
+            array(
+                'misc_resolvable.php' => '',
+            )
+        );
+
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Resolvable', $this->engine->resolve('misc_resolvable'));
+    }
+
+    public function testResolveAsTemplate(){
+        vfsStream::create(
+            array(
+                'template.php' => '',
+            )
+        );
+
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Template', $this->engine->resolve('template', class:Template::class));
     }
 
     public function testGetTemplatePath()

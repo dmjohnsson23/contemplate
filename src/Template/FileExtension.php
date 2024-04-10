@@ -58,7 +58,7 @@ class FileExtension
      */
     public function get($type=null)
     {
-        if (!is_null($type) && isset($this->typedFileExtensions[$type])) {
+        if (!is_null($type) && isset($this->typedFileExtensions) && array_key_exists($type, $this->typedFileExtensions)) {
             return $this->typedFileExtensions[$type];
         }
         else {
