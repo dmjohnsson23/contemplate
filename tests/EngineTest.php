@@ -287,4 +287,15 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame('Hello!', $this->engine->render('template'));
     }
+
+    public function testCallController()
+    {
+        vfsStream::create(
+            array(
+                'controller.php' => '<?php return function(){return "Hello!";};',
+            )
+        );
+
+        $this->assertSame('Hello!', $this->engine->callController('controller'));
+    }
 }

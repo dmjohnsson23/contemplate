@@ -3,6 +3,7 @@
 namespace DMJohnson\Contemplate;
 
 use DMJohnson\Contemplate\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Template\Controller;
 use DMJohnson\Contemplate\Template\Data;
 use DMJohnson\Contemplate\Template\Directory;
 use DMJohnson\Contemplate\Template\FileExtension;
@@ -351,5 +352,72 @@ class Engine
     public function import($name, array $data=[], $type = null)
     {
         return $this->resolve($name, $type)->import($data);
+    }
+
+    /**
+     * Load one of the controller logic files that accompany the named template,
+     * and return its value.
+     * 
+     * @param string $name The name of the controller to locate
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
+     * @return Controller
+     */
+    public function makeController($name, $type=null)
+    {
+        return new Controller($this, $name, $type);
+    }
+
+    /**
+     * Load one of the controller logic files that accompany the named template, call the function,
+     * and return its value.
+     * 
+     * @param string $name The name of the controller to locate
+     * @param string|null $type An optional value specifying the type of object to resolve. This 
+     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
+     * template, multiple controllers, static resources, etc...).
+     * @param array $params Function parameters to pass to the controller function
+     * @return mixed The return value of the controller function
+     */
+    public function callController($name, $type=null, array $params=[])
+    {
+        return $this->makeController($name, $type)->call($params);
+    }
+
+    /**
+     * Automated method to call the given controller, assuming your controllers have been named 
+     * with HTTP verb suffixes. Echoes the controller's return value (which is presumed to be a 
+     * rendered template).
+     * 
+     * @param string $name The name of the controller to locate
+     * @param array $params Function parameters to pass to the controller function
+     * @return mixed The return value of the controller function
+     */
+    public function autoCallHttpController($name, array $params=[])
+    {
+        $req_method = \strtoupper($_SERVER['REQUEST_METHOD']);
+        if ($req_method === 'GET') {
+            $type = Resolvable::TYPE_CONTROLLER_GET;
+        }
+        elseif ($req_method === 'POST') {
+            $type = Resolvable::TYPE_CONTROLLER_POST;
+        }
+        elseif ($req_method === 'PUT') {
+            $type = Resolvable::TYPE_CONTROLLER_PUT;
+        }
+        elseif ($req_method === 'DELETE') {
+            $type = Resolvable::TYPE_CONTROLLER_DELETE;
+        }
+        elseif ($req_method === 'PATCH') {
+            $type = Resolvable::TYPE_CONTROLLER_PATCH;
+        }
+        elseif ($req_method === 'HEAD') {
+            $type = Resolvable::TYPE_CONTROLLER_HEAD;
+        }
+        else {
+            $type = $req_method;
+        }
+        echo $this->makeController($name, $type)->call($params);
     }
 }

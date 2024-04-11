@@ -9,25 +9,38 @@ use LogicException;
 use Throwable;
 
 /**
- * Container which holds template data and provides access to template functions.
+ * Generic base container for all kinds of resolvable objects (Templates, Controllers, resources, etc...).
  */
 class Resolvable
 {
     /**
-     * Instance of the template engine.
+     * Instance of the Contemplate engine.
      * @var Engine
      */
     protected $engine;
 
     /**
-     * The name of the template.
+     * The name of the resolvable.
      * @var Name
      */
     protected $name;
 
+    /** A normal template file */
     const TYPE_TEMPLATE = '__TEMPLATE__';
+    /** A controller which should return a string as a response to an HTTP GET request */
     const TYPE_CONTROLLER_GET = '__HTTP_GET__';
+    /** A controller which should run as a response to an HTTP GET request */
+    const TYPE_CONTROLLER_HEAD = '__HTTP_HEAD__';
+    /** A controller which should return a string as a response to an HTTP POST request */
     const TYPE_CONTROLLER_POST = '__HTTP_POST__';
+    /** A controller which should return a string as a response to an HTTP PUT request */
+    const TYPE_CONTROLLER_PUT = '__HTTP_PUT__';
+    /** A controller which should return a string as a response to an HTTP DELETE request */
+    const TYPE_CONTROLLER_DELETE = '__HTTP_DELETE__';
+    /** A controller which should return a string as a response to an HTTP PATCH request */
+    const TYPE_CONTROLLER_PATCH = '__HTTP_PATCH__';
+    /** A controller which is intended to be called by other controllers */
+    const TYPE_CONTROLLER_DELEGATE = '__DELEGATE__';
 
     /**
      * Create new Resolvable instance.
@@ -41,6 +54,22 @@ class Resolvable
     {
         $this->engine = $engine;
         $this->name = new Name($engine, $name, $type);
+    }
+
+    /**
+     * @return Engine
+     */
+    public function getEngine()
+    {
+        return $this->engine;
+    }
+
+    /**
+     * @return Name
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

@@ -5,11 +5,16 @@ Contemplate
 
 This is an extended fork of [Plates](https://github.com/thephpleague/plates) that adds support for additional functionality, such as:
 
-* Loading controllers (or, any arbitrary function or object) using the same loader used to load templates
-* Loading static resources (but *not* public web assets...for now) using the same loader used to load templates
-* Name-based associations between templates, controllers, and resources
+* Loading controllers (or, any arbitrary function or object) using the same loader used to load templates.
+* Loading static resources (but *not* public web assets...for now) using the same loader used to load templates.
+* Name-based associations between templates, controllers, and resources.
 
-Plates is a very handy little project, but doesn't appear to be receiving new features or responding to pull requests. Contemplate is a drop-in replacement for Plates; you should be able to simply change the import, and everything should "just work". You can then add additional features over time using Contemplate's extended functionality.
+Plates is a very handy little project, but doesn't appear to be receiving new features or responding to pull requests. Contemplate is a drop-in replacement for Plates; you should be able to simply change the import, and everything should "just work" so long as you don't have any custom template functions whose names interfere with new methods added by Contemplate. You can then add additional features over time using Contemplate's extended functionality.
+
+Loading controllers and resources via the template loader system has a few advantages:
+
+* Organization: it's nice to have all the code for a request live close together in your project structure.
+* Extensibility and modularity: Using Themes, you can override the functionality of certain controllers or resources for a specific theme, but fall back to the base theme if an override does not exist.
 
 ## Documentation
 
