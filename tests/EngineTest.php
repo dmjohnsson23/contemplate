@@ -232,7 +232,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Template', $this->engine->resolve('template', class:Template::class));
+        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Template', $this->engine->resolve('template', null, Template::class));
     }
 
     public function testGetTemplatePath()

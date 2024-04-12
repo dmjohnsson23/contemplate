@@ -158,6 +158,6 @@ class ResolvableTest extends TestCase
             )
         );
 
-        $this->assertSame('Hello World', $this->resolvable->importAssociated(type:Resolvable::TYPE_CONTROLLER_GET));
+        $this->assertSame('Hello World', $this->resolvable->importAssociated([], Resolvable::TYPE_CONTROLLER_GET));
     }
 }

@@ -94,6 +94,27 @@ class ControllerTest extends TestCase
         $this->assertSame([], $this->controller->call());
     }
 
+    public function testAddData()
+    {
+        $this->controller->addData(array('name' => 'Jonathan'));
+        $data = $this->controller->getEngine()->getData();
+        $this->assertSame('Jonathan', $data['name']);
+    }
+
+    public function testAddDataAssociated()
+    {
+        $this->controller->addDataAssociated(array('name' => 'Jonathan'));
+        $data = $this->controller->getEngine()->getData('controller');
+        $this->assertSame('Jonathan', $data['name']);
+    }
+
+    public function testAddDataWithTemplate()
+    {
+        $this->controller->addData(array('name' => 'Jonathan'), 'template');
+        $data = $this->controller->getEngine()->getData('template');
+        $this->assertSame('Jonathan', $data['name']);
+    }
+
     public function testDelegate()
     {
         vfsStream::create(
@@ -124,7 +145,7 @@ class ControllerTest extends TestCase
             )
         );
 
-        $this->assertSame('Delegate to the delegate', $this->controller->delegateAssociated(type:Resolvable::TYPE_CONTROLLER_GET));
+        $this->assertSame('Delegate to the delegate', $this->controller->delegateAssociated([], Resolvable::TYPE_CONTROLLER_GET));
     }
 
     public function testDelegateWithParams()
