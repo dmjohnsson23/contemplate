@@ -3,6 +3,7 @@
 namespace DMJohnson\Contemplate\Tests;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Template\Resolvable;
 use DMJohnson\Contemplate\Template\Template;
 use org\bovigo\vfs\vfsStream;
 
@@ -297,5 +298,17 @@ class EngineTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame('Hello!', $this->engine->callController('controller'));
+    }
+
+    public function testAutoCallHttpController()
+    {
+        vfsStream::create(
+            array(
+                'controller.get.php' => '<?php return function(){return "Hello!";};',
+            )
+        );
+        $this->engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
+
+        $this->assertSame('Hello!', $this->engine->autoCallHttpController('controller', [], 'get'));
     }
 }

@@ -392,32 +392,37 @@ class Engine
      * 
      * @param string $name The name of the controller to locate
      * @param array $params Function parameters to pass to the controller function
+     * @param null|'GET'|'POST'|'PUT'|'DELETE'|'PATCH'|'HEAD' $req_method The request method. If 
+     * null, will auto-detect from the `$_SERVER` array.
      * @return mixed The return value of the controller function
      */
-    public function autoCallHttpController($name, array $params=[])
+    public function autoCallHttpController($name, array $params=[], $req_method=null)
     {
-        $req_method = \strtoupper($_SERVER['REQUEST_METHOD']);
+        if (is_null($req_method)) {
+            $req_method = $_SERVER['REQUEST_METHOD'];
+        }
+        $req_method = \strtoupper($req_method);
         if ($req_method === 'GET') {
-            $type = Resolvable::TYPE_CONTROLLER_GET;
+            $type = Resolvable::TYPE_CONTROLLER_HTTP_GET;
         }
         elseif ($req_method === 'POST') {
-            $type = Resolvable::TYPE_CONTROLLER_POST;
+            $type = Resolvable::TYPE_CONTROLLER_HTTP_POST;
         }
         elseif ($req_method === 'PUT') {
-            $type = Resolvable::TYPE_CONTROLLER_PUT;
+            $type = Resolvable::TYPE_CONTROLLER_HTTP_PUT;
         }
         elseif ($req_method === 'DELETE') {
-            $type = Resolvable::TYPE_CONTROLLER_DELETE;
+            $type = Resolvable::TYPE_CONTROLLER_HTTP_DELETE;
         }
         elseif ($req_method === 'PATCH') {
-            $type = Resolvable::TYPE_CONTROLLER_PATCH;
+            $type = Resolvable::TYPE_CONTROLLER_HTTP_PATCH;
         }
         elseif ($req_method === 'HEAD') {
-            $type = Resolvable::TYPE_CONTROLLER_HEAD;
+            $type = Resolvable::TYPE_CONTROLLER_HTTP_HEAD;
         }
         else {
             $type = $req_method;
         }
-        echo $this->makeController($name, $type)->call($params);
+        return $this->makeController($name, $type)->call($params);
     }
 }

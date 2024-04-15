@@ -20,8 +20,8 @@ class ControllerTest extends TestCase
 
         $engine = new Engine(vfsStream::url('templates'));
         $engine->setFileExtension('delegate.php', Resolvable::TYPE_CONTROLLER_DELEGATE);
-        $engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_GET);
-        $engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_POST);
+        $engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
+        $engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_HTTP_POST);
 
         $this->controller = new Controller($engine, 'controller');
     }
@@ -145,7 +145,7 @@ class ControllerTest extends TestCase
             )
         );
 
-        $this->assertSame('Delegate to the delegate', $this->controller->delegateAssociated([], Resolvable::TYPE_CONTROLLER_GET));
+        $this->assertSame('Delegate to the delegate', $this->controller->delegateAssociated([], Resolvable::TYPE_CONTROLLER_HTTP_GET));
     }
 
     public function testDelegateWithParams()

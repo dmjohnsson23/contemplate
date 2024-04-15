@@ -28,17 +28,17 @@ class Resolvable
     /** A normal template file */
     const TYPE_TEMPLATE = '__TEMPLATE__';
     /** A controller which should return a string as a response to an HTTP GET request */
-    const TYPE_CONTROLLER_GET = '__HTTP_GET__';
+    const TYPE_CONTROLLER_HTTP_GET = '__HTTP_GET__';
     /** A controller which should run as a response to an HTTP GET request */
-    const TYPE_CONTROLLER_HEAD = '__HTTP_HEAD__';
+    const TYPE_CONTROLLER_HTTP_HEAD = '__HTTP_HEAD__';
     /** A controller which should return a string as a response to an HTTP POST request */
-    const TYPE_CONTROLLER_POST = '__HTTP_POST__';
+    const TYPE_CONTROLLER_HTTP_POST = '__HTTP_POST__';
     /** A controller which should return a string as a response to an HTTP PUT request */
-    const TYPE_CONTROLLER_PUT = '__HTTP_PUT__';
+    const TYPE_CONTROLLER_HTTP_PUT = '__HTTP_PUT__';
     /** A controller which should return a string as a response to an HTTP DELETE request */
-    const TYPE_CONTROLLER_DELETE = '__HTTP_DELETE__';
+    const TYPE_CONTROLLER_HTTP_DELETE = '__HTTP_DELETE__';
     /** A controller which should return a string as a response to an HTTP PATCH request */
-    const TYPE_CONTROLLER_PATCH = '__HTTP_PATCH__';
+    const TYPE_CONTROLLER_HTTP_PATCH = '__HTTP_PATCH__';
     /** A controller which is intended to be called by other controllers */
     const TYPE_CONTROLLER_DELEGATE = '__DELEGATE__';
 

@@ -46,8 +46,8 @@ $engine->setFileExtension('php');
 // File extensions for special built-in types
 // Using these types is optional, but provides some additional features for convenience
 $engine->setFileExtension('tpl.php', Resolvable::TYPE_TEMPLATE);
-$engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_GET);
-$engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_POST);
+$engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
+$engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_HTTP_POST);
 // Custom extensions for custom types
 // These names are arbitrary--you can use whatever makes sense for your application
 $engine->setFileExtension('md', 'markdown');
@@ -61,7 +61,7 @@ $engine->make('index');
 // Controllers (a resolvable type unique to Contemplate) can be called implicitly using the detected HTTP method
 $engine->callController('some_form');
 // Or explicitly using a built-in type
-$engine->callController('some_form', Resolvable::TYPE_CONTROLLER_GET);
+$engine->callController('some_form', Resolvable::TYPE_CONTROLLER_HTTP_GET);
 // Or explicitly using a custom type
 $engine->callController('some_form', 'delegated_function');
 // Custom types are specified via the type parameter

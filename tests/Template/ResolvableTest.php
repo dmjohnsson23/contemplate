@@ -20,8 +20,8 @@ class ResolvableTest extends TestCase
         $engine = new Engine(vfsStream::url('templates'));
         $engine->registerFunction('uppercase', 'strtoupper');
         $engine->setFileExtension('tpl.php', Resolvable::TYPE_TEMPLATE);
-        $engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_GET);
-        $engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_POST);
+        $engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
+        $engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_HTTP_POST);
 
         $this->resolvable = new Resolvable($engine, 'resolvable');
     }
@@ -111,7 +111,7 @@ class ResolvableTest extends TestCase
 
     public function testResolveAssociated()
     {
-        $other = $this->resolvable->resolveAssociated(Resolvable::TYPE_CONTROLLER_GET);
+        $other = $this->resolvable->resolveAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET);
         $this->assertSame('vfs://templates/resolvable.get.php', $other->path());
     }
 
@@ -158,6 +158,6 @@ class ResolvableTest extends TestCase
             )
         );
 
-        $this->assertSame('Hello World', $this->resolvable->importAssociated([], Resolvable::TYPE_CONTROLLER_GET));
+        $this->assertSame('Hello World', $this->resolvable->importAssociated([], Resolvable::TYPE_CONTROLLER_HTTP_GET));
     }
 }
