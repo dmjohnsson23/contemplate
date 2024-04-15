@@ -18,7 +18,7 @@ final class ThemeResolveTemplatePath implements ResolveTemplatePath
     public function __invoke(Name $name): string {
         $searchedPaths = [];
         foreach ($this->theme->listThemeHierarchy() as $theme) {
-            $path = $theme->dir() . '/' . $name->getName() . '.' . $name->getEngine()->getFileExtension();
+            $path = $theme->dir() . '/' . $name->getFile();
             if (is_file($path)) {
                 return $path;
             }
