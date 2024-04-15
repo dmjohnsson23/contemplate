@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DMJohnson\Contemplate\Tests\Template;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Template\Name;
 use DMJohnson\Contemplate\Template\Resolvable;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +30,17 @@ class ResolvableTest extends TestCase
     public function testCanCreateInstance()
     {
         $this->assertInstanceOf(Resolvable::class, $this->resolvable);
+    }
+
+    public function testGetEngine()
+    {
+        $this->assertInstanceOf(Engine::class, $this->resolvable->getEngine());
+    }
+
+    public function testGetName()
+    {
+        $this->assertInstanceOf(Name::class, $this->resolvable->getName());
+        $this->assertSame('resolvable', $this->resolvable->getName()->getName());
     }
 
     public function testCanCallFunction()
@@ -137,6 +149,27 @@ class ResolvableTest extends TestCase
         $template = $this->resolvable->makeAssociated(array('name' => 'Jonathan'));
         $this->assertInstanceOf('DMJohnson\Contemplate\Template\Template', $template);
         $this->assertSame(array('name' => 'Jonathan'), $template->data());
+    }
+
+    public function testPathAssociated()
+    {
+        $this->assertSame('vfs://templates/resolvable.get.php', $this->resolvable->pathAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET));
+    }
+
+    public function testExistsAssociated()
+    {
+        vfsStream::create(
+            array(
+                'resolvable.get.php' => '',
+            )
+        );
+
+        $this->assertTrue($this->resolvable->existsAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET));
+    }
+
+    public function testDoesNotExistAssociated()
+    {
+        $this->assertFalse($this->resolvable->existsAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET));
     }
 
     public function testRenderAssociatedTemplate()
