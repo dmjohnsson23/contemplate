@@ -169,19 +169,7 @@ class Name
      */
     public function getPath()
     {
-        if (is_null($this->folder)) {
-            return "{$this->getDefaultDirectory()}/{$this->file}";
-        }
-
-        $path = "{$this->folder->getPath()}/{$this->file}";
-
-        if (
-            !is_file($path)
-            && $this->folder->getFallback()
-            && is_file("{$this->getDefaultDirectory()}/{$this->file}")
-        ) {
-            $path = "{$this->getDefaultDirectory()}/{$this->file}";
-        }
+        $path = ($this->engine->getResolveTemplatePath())($this);
 
         return $path;
     }
