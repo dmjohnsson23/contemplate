@@ -80,7 +80,7 @@ class Template extends Resolvable
      * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
      * template, multiple controllers, static resources, etc...).
      */
-    public function __construct(Engine $engine, $name, $type=null)
+    public function __construct(Engine $engine, $name, $type=Resolvable::TYPE_TEMPLATE)
     {
         parent::__construct($engine, $name, $type);
 
