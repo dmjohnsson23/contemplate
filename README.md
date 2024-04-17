@@ -70,6 +70,26 @@ $engine->path('some_article', 'markdown');
 $form_handler_object = $engine->import('some_form', type:'form_handler_object');
 ```
 
+This library also introduces an optional extension you can use to bridge Contemplate with [Twig](https://twig.symfony.com), meaning you can use both template systems simultaneously.
+
+```php
+$engine->loadExtension(new DMJohnson\Contemplate\Extension\ContemplateTwig\ContemplateTwig([
+    // twig options go here
+    'cache' => '/path/to/cache/',
+    'autoescape' => 'html',
+]))
+
+// Then, in a controller or template, do this:
+$this->renderTwig('template_name', ['name'=>'Bob']);
+```
+
+You the Contemplate `Engine` object is also exposed to Twig templates.
+
+```twig
+{{ contemplate.render('template_name') }}
+```
+
+
 ## License
 
 The MIT License (MIT). Please see [License File](https://github.com/thephpleague/plates/blob/master/LICENSE) for more information.

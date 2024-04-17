@@ -29,6 +29,9 @@
     "require" : {
         "php": "^7.0|^8.0"
     },
+    "suggest": {
+        "twig/twig": "For the ContemplateTwig bridge extension"
+    },
     "require-dev": {
         "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^9.5",
