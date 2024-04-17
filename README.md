@@ -70,25 +70,31 @@ $engine->path('some_article', 'markdown');
 $form_handler_object = $engine->import('some_form', type:'form_handler_object');
 ```
 
-This library also introduces an optional extension you can use to bridge Contemplate with [Twig](https://twig.symfony.com), meaning you can use both template systems simultaneously.
+This library also introduces an optional extension you can use to bridge Contemplate with [Twig](https://twig.symfony.com), meaning you can use both template systems simultaneously. The bridge is very small and light-weight, opting for simplicity and low overhead over full interop (e.g., a Twig template can't extend a Plates template and vice-versa; though they can include one another and share data).
+
+The syntax of Twig is nicer than the regular regular PHP code used in Contemplate/Plates, and has a lot of niceties like auto-escaping. But the native Plates-style templates do have the advantages of being more flexible for advanced user cases, and easier to convert to from legacy plain-PHP code. It can be nice to have both available.
 
 ```php
-$engine->loadExtension(new DMJohnson\Contemplate\Extension\ContemplateTwig\ContemplateTwig([
+$toothpick = new DMJohnson\Contemplate\Extension\ContemplateTwig\ContemplateTwig([
     // twig options go here
     'cache' => '/path/to/cache/',
     'autoescape' => 'html',
-]))
+]);
+$engine->loadExtension($toothpick);
 
 // Then, in a controller or template, do this:
-$this->renderTwig('template_name', ['name'=>'Bob']);
+$this->renderTwig('profile', ['name'=>'Gath', 'location'=>'Foo']);
+// Or, you can render the Twig template directly from outside a template or controller like this:
+$toothpick->render('profile', ['name'=>'Gath', 'location'=>'Foo']);
 ```
 
 You the Contemplate `Engine` object is also exposed to Twig templates.
 
 ```twig
-{{ contemplate.render('template_name') }}
+{{ contemplate.render('template_name') | raw }}
 ```
 
+Data added via `$engine->addData` will automatically be exposed to Twig templates in addition to Contemplate templates.
 
 ## License
 
