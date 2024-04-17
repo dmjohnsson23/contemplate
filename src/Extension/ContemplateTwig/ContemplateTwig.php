@@ -49,4 +49,10 @@ class ContemplateTwig implements ExtensionInterface
     {
         return $this->twig->load($name)->renderBlock($block, array_merge($this->contemplate->getData($name), $data));
     }
+
+    /** Forward any unknown method calls to the underlying Twig environment */
+    public function __call($name, $arguments)
+    {
+        return \call_user_func_array([$this->twig, $name], $arguments);
+    }
 }
