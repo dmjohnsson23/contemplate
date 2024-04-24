@@ -55,4 +55,18 @@ class ContemplateTwig implements ExtensionInterface
     {
         return \call_user_func_array([$this->twig, $name], $arguments);
     }
+
+    /** Expose one of the Contemplate template functions (registered via `registerFunction` or via an extension) to Twig */
+    public function passthruFunction(string $name, array $twigFuncOptions = []){
+        $callable = $this->contemplate->getFunction($name)->getCallback();
+        $twigFunc = new \Twig\TwigFunction($name, $callable, $twigFuncOptions);
+        $this->twig->addFunction($twigFunc);
+    }
+
+    /** Expose one of the Contemplate template functions (registered via `registerFunction` or via an extension) to Twig as a filter*/
+    public function passthruFilter(string $name, array $twigFuncOptions = []){
+        $callable = $this->contemplate->getFunction($name)->getCallback();
+        $twigFunc = new \Twig\TwigFilter($name, $callable, $twigFuncOptions);
+        $this->twig->addFilter($twigFunc);
+    }
 }

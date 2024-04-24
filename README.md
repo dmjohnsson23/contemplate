@@ -8,6 +8,7 @@ This is an extended fork of [Plates](https://github.com/thephpleague/plates) tha
 * Loading controllers (or, any arbitrary function or object) using the same loader used to load templates.
 * Loading static resources (but *not* public web assets...for now) using the same loader used to load templates.
 * Name-based associations between templates, controllers, and resources.
+* An optional extension adding integration with [Twig](https://twig.symfony.com)
 
 Plates is a very handy little project, but doesn't appear to be receiving new features or responding to pull requests. Contemplate is a drop-in replacement for Plates; you should be able to simply change the import, and everything should "just work" so long as you don't have any custom template functions whose names interfere with new methods added by Contemplate. You can then add additional features over time using Contemplate's extended functionality.
 
@@ -70,7 +71,7 @@ $engine->path('some_article', 'markdown');
 $form_handler_object = $engine->import('some_form', type:'form_handler_object');
 ```
 
-This library also introduces an optional extension you can use to bridge Contemplate with [Twig](https://twig.symfony.com), meaning you can use both template systems simultaneously. The bridge is very small and light-weight, opting for simplicity and low overhead over full interop (e.g., a Twig template can't extend a Plates template and vice-versa; though they can include one another and share data).
+This library also introduces an optional extension you can use to bridge Contemplate with Twig, meaning you can use both template systems simultaneously. The bridge is very small and light-weight, opting for simplicity and low overhead over full interop (e.g., a Twig template can't extend a Plates template and vice-versa; though they can include one another and share data).
 
 The syntax of Twig is nicer than the regular regular PHP code used in Contemplate/Plates, and has a lot of niceties like auto-escaping. But the native Plates-style templates do have the advantages of being more flexible for advanced user cases, and easier to convert to from legacy plain-PHP code. It can be nice to have both available.
 
@@ -81,8 +82,17 @@ $toothpick = new DMJohnson\Contemplate\Extension\ContemplateTwig\ContemplateTwig
     'autoescape' => 'html',
 ]);
 $engine->loadExtension($toothpick);
+// After loading the extension, you can use the ContemplateTwig instance as a proxy for the Twig Environment
+$toothpick->addGlobal('CONFIG', $yourConfig);
+// You can also expose Plates extension functions as functions/filters in Twig
+// (These functions may not work if they rely on access to the Template object, however)
+$toothpick->passthruFunction('uri')
+$toothpick->passthruFilter('asset')
+```
 
-// Then, in a controller or template, do this:
+Then, in a controller or template, do this:
+
+```php
 $this->renderTwig('profile', ['name'=>'Gath', 'location'=>'Foo']);
 // Or, you can render the Twig template directly from outside a template or controller like this:
 $toothpick->render('profile', ['name'=>'Gath', 'location'=>'Foo']);
