@@ -71,6 +71,8 @@ $engine->path('some_article', 'markdown');
 $form_handler_object = $engine->import('some_form', type:'form_handler_object');
 ```
 
+### Twig Interop
+
 This library also introduces an optional extension you can use to bridge Contemplate with Twig, meaning you can use both template systems simultaneously. The bridge is very small and light-weight, opting for simplicity and low overhead over full interop (e.g., a Twig template can't extend a Plates template and vice-versa; though they can include one another and share data).
 
 The syntax of Twig is nicer than the regular regular PHP code used in Contemplate/Plates, and has a lot of niceties like auto-escaping. But the native Plates-style templates do have the advantages of being more flexible for advanced user cases, and easier to convert to from legacy plain-PHP code. It can be nice to have both available.
@@ -98,13 +100,51 @@ $this->renderTwig('profile', ['name'=>'Gath', 'location'=>'Foo']);
 $toothpick->render('profile', ['name'=>'Gath', 'location'=>'Foo']);
 ```
 
-You the Contemplate `Engine` object is also exposed to Twig templates.
+The Contemplate `Engine` object is also exposed to Twig templates.
 
 ```twig
 {{ contemplate.render('template_name') | raw }}
 ```
 
 Data added via `$engine->addData` will automatically be exposed to Twig templates in addition to Contemplate templates.
+
+### Using with a router
+
+While Contemplate does not include a router, it is designed with the intent of being usable with one. Below is a minimal example of how it could be used with [Aura router](https://github.com/auraphp/Aura.Router/tree/3.x). Any router could likely be used, but one that allows arbitrary values for the handler or controller is best. This allows the Contemplate controller name to be used as the handler for the router, and then loaded via the Contemplate engine as normal.
+
+```php
+use Aura\Router\RouterContainer;
+use DMJohnson\Contemplate\Engine;
+use GuzzleHttp\Psr7\ServerRequest;
+// Setup the Contemplate engine
+$engine = new Engine(...);
+// Load routes
+$routerContainer = new RouterContainer();
+$map = $routerContainer->getMap();
+// We use the controller name as the "handler" for each route
+$map->get('home', '', 'pages/home');
+$map->get('help', '/help', 'pages/help');
+$map->get('about', '/about', 'pages/about_us');
+// Expose the route generator to templates
+$engine->addData(['routes'=>$routerContainer->getGenerator()]);
+// Create a request object and match a route
+$matcher = $routerContainer->getMatcher();
+$request = ServerRequest::fromGlobals();
+$route = $matcher->match($request);
+// If we failed to match a route
+if ($route === false) {
+    $failedRoute = $matcher->getFailedRoute();
+    // Code to render error page goes here
+    die();
+}
+// If we reach this point, we successfully matched a route
+// Now we can dispatch using the `autoCallHttpController` method
+$engine->autoCallHttpController(
+    $route->handler, // Route handler from above (the controller name)
+    [$request, $route->attributes], // Parameters to pass to controller (request + url parameters)
+    $request->getMethod(), // Use the HTTP method to determine which controller to call
+);
+```
 
 ## License
 

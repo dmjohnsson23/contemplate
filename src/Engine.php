@@ -387,8 +387,11 @@ class Engine
 
     /**
      * Automated method to call the given controller, assuming your controllers have been named 
-     * with HTTP verb suffixes. Echoes the controller's return value (which is presumed to be a 
-     * rendered template).
+     * with HTTP verb suffixes. Returns the controller's return value--likely a rendered template 
+     * string or a PSR7 response object, though it may be any arbitrary object you choose.
+     * 
+     * If you are using a router, such as FastRoute or Aura, you would call this method after 
+     * resolving the route, passing in the route variables as controller parameters.
      * 
      * @param string $name The name of the controller to locate
      * @param array $params Function parameters to pass to the controller function
