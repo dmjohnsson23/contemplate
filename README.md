@@ -60,7 +60,7 @@ Then, when interacting with the engine to resolve objects, you can specify the r
 // Templates implicitly use `Resolvable::TYPE_TEMPLATE`
 $engine->make('index');
 // Controllers (a resolvable type unique to Contemplate) can be called implicitly using the detected HTTP method
-$engine->callController('some_form');
+$engine->autoCallHttpController('some_form');
 // Or explicitly using a built-in type
 $engine->callController('some_form', Resolvable::TYPE_CONTROLLER_HTTP_GET);
 // Or explicitly using a custom type

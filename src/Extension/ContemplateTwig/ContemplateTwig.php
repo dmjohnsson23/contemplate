@@ -3,6 +3,7 @@ namespace DMJohnson\Contemplate\Extension\ContemplateTwig;
 
 use \DMJohnson\Contemplate\Extension\ExtensionInterface;
 use \DMJohnson\Contemplate\Engine;
+use \DMJohnson\Contemplate\Template\Resolvable;
 use \Twig\Environment;
 
 /**
@@ -24,6 +25,7 @@ class ContemplateTwig implements ExtensionInterface
 
     private Environment $twig;
     private Engine $contemplate;
+    public Resolvable $template;
     
     public function __construct(private array $twigEnvironmentOptions)
     {
