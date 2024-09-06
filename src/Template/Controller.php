@@ -11,12 +11,12 @@ class Controller extends Resolvable{
      * Execute the controller code and return its value
      */
     public function call(array $args = []){
-        return call_user_func_array($this->import(), $args);
+        return ControllerDecorator::callDecorated($this->import(), $args);
     }
 
     /** Alias for call() */
     public function __invoke(...$args){
-        return call_user_func_array($this->import(), $args);
+        return ControllerDecorator::callDecorated($this->import(), $args);
     }
 
     /** Shortcut for `$this->engine->addData()` */
