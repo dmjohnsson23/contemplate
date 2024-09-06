@@ -71,6 +71,75 @@ $engine->path('some_article', 'markdown');
 $form_handler_object = $engine->import('some_form', type:'form_handler_object');
 ```
 
+### Controllers
+
+As mentioned previously, the main thing Contemplate adds on top of Plates is the concept of loadable controllers that can live beside your templates. These controllers are PHP files which return a callable, which will be executed by the engine. You can best think of Contemplate controllers as a sort of auto-loaded function. For example:
+
+```php
+// my_controller.get.php
+use \Psr\Http\Message\ServerRequestInterface;
+/**
+ * This is the controller for my_page and does xxx and yyy.
+ */
+return function(ServerRequestInterface $request){
+    // ... do some logic here ...
+    // Note: `renderAssociated` returns a string, not a PSR7 `Response` object. If you require a 
+    // `Response` object, you'll need to handle the conversion yourself.
+    return $this->renderAssociated([
+        'var1'=>$var1,
+        'var2'=>$var2,
+    ]);
+}
+```
+
+Which could be called from like so, perhaps from your router:
+```php
+$response = $engine->autoCallHttpController('my_controller', [$request]);
+// Here, `$response` is whatever you returned from the controller above
+```
+
+Controllers can delegate to other controllers via `$this->delegate`:
+
+```php
+// my_controller.get.php
+use \Psr\Http\Message\ServerRequestInterface;
+return function(ServerRequestInterface $request){
+    // Load and call authentication_handler.delegate.php
+    $this->delegate('authentication_handler', [$request]);
+    // ... do remaining controller logic here ...
+}
+```
+
+Alternatively, you can define controller decorators that can be applied to controllers:
+
+```php
+// MyDecorator.php
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
+class MyDecorator extends ControllerDecorator
+{
+    public function __invoke($target, $next, $args)
+    {
+        echo 'do this before the controller runs';
+        $result = $next($args); // Run the controller
+        echo 'do this after the controller runs';
+        return $result;
+    }
+}
+```
+
+Then in the controller:
+
+```php
+// my_controller.get.php
+use \Psr\Http\Message\ServerRequestInterface;
+#[MyDecorator]
+return function(ServerRequestInterface $request){
+    // ... do controller logic here ...
+}
+```
+
+Decorators wrap the controller and can be used for common tasks, such as converting the response into a `Response` object, or checking authentication headers.
+
 ### Twig Interop
 
 This library also introduces an optional extension you can use to bridge Contemplate with Twig, meaning you can use both template systems simultaneously. The bridge is very small and light-weight, opting for simplicity and low overhead over full interop (e.g., a Twig template can't extend a Plates template and vice-versa; though they can include one another and share data).
