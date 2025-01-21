@@ -1,7 +1,7 @@
 Contemplate
 ===========
 
-"Contemplate" is short for "Controllers and Templates". It is somewhat more than a mere templating library, but a great deal less than a full web framework.
+"Contemplate" is short for "Controllers and Templates". It is somewhat more than a mere templating library, but a great deal less than a full web framework. It is primarily intended as a progressive enhancement library to gradually bring a standalone (meaning "sans-framework") legacy PHP application into the modern era. It is designed to require minimal refactoring to being using, to allow legacy PHP code to continue to operate beside it. It aims to be flexible enough to allow you to gradually work toward a place similar to what you'd get with a full PHP framework--PSR7, routing, and so forth--without actually *requiring* any of these things to begin using.
 
 This is an extended fork of [Plates](https://github.com/thephpleague/plates) that adds support for additional functionality, such as:
 
