@@ -18,6 +18,12 @@ use \Twig\Environment;
  *  - A global `contemplate` object will be exposed to Twig templates, which is the Contemplate `Engine`
  * 
  * This extension will not work with vanilla Plates; it relies on features unique to Contemplate.
+ * 
+ * @method addExtension(\Twig\Extension\ExtensionInterface $extension)
+ * @method addGlobal(string $name, mixed $value)
+ * @method addTest(\Twig\TwigTest $test)
+ * @method addFilter(\Twig\TwigFilter $filter)
+ * @method addFunction(\Twig\TwigFunction $function)
  */
 class ContemplateTwig implements ExtensionInterface
 {
