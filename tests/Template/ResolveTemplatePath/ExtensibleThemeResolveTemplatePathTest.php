@@ -8,7 +8,7 @@ use DMJohnson\Contemplate\Engine;
 use DMJohnson\Contemplate\Template\Controller;
 use DMJohnson\Contemplate\Template\Name;
 use DMJohnson\Contemplate\Template\Resolvable;
-use DMJohnson\Contemplate\Template\ResolveTemplatePath\ThemeResolveTemplatePath;
+use DMJohnson\Contemplate\Template\ResolveTemplatePath\ExtensibleThemeResolveTemplatePath;
 use DMJohnson\Contemplate\Template\Theme;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -39,10 +39,14 @@ class ExtensibleThemeResolveTemplatePathTest extends TestCase
 
         $this->engine = new Engine(vfsStream::url('templates'));
 
-        $this->resolver = new ThemeResolveTemplatePath(Theme::hierarchy([
-            Theme::new(vfsStream::url('templates/a'), 'A'),
-            Theme::new(vfsStream::url('templates/b'), 'B'),
+        $this->engine->addFolder('C', vfsStream::url('templates/c'));
+        $this->engine->addFolder('B', vfsStream::url('templates/b'));
+        $this->engine->addFolder('A', vfsStream::url('templates/a'));
+
+        $this->resolver = new ExtensibleThemeResolveTemplatePath(Theme::hierarchy([
             Theme::new(vfsStream::url('templates/c'), 'C'),
+            Theme::new(vfsStream::url('templates/b'), 'B'),
+            Theme::new(vfsStream::url('templates/a'), 'A'),
         ]));
     }
 

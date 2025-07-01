@@ -121,7 +121,7 @@ class Name
 
     /**
      * Get the parsed template folder.
-     * @return string
+     * @return Folder
      */
     public function getFolder()
     {
@@ -169,7 +169,19 @@ class Name
      */
     public function getPath()
     {
-        $path = ($this->engine->getResolveTemplatePath())($this);
+        if (is_null($this->folder)) {
+            return "{$this->getDefaultDirectory()}/{$this->file}";
+        }
+
+        $path = "{$this->folder->getPath()}/{$this->file}";
+
+        if (
+            !is_file($path)
+            && $this->folder->getFallback()
+            && is_file("{$this->getDefaultDirectory()}/{$this->file}")
+        ) {
+            $path = "{$this->getDefaultDirectory()}/{$this->file}";
+        }
 
         return $path;
     }

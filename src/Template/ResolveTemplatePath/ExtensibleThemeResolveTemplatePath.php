@@ -13,7 +13,13 @@ final class ExtensibleThemeResolveTemplatePath extends ThemeResolveTemplatePath
 {
     protected function checkPredicate(Name $name, Theme $theme, mixed &$state): bool{
         if ($state) return true;
-        if ($name->getFolder() == $theme->name()){
+        if (is_null($name->getFolder())){
+            // There is not folder predicate for this path
+            $state = true;
+            return true;
+        }
+        if ($name->getFolder()->getName() == $theme->name()){
+            // We reached the required level in the hierarchy
             $state = true;
             return true;
         }
