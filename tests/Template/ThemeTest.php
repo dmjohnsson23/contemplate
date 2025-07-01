@@ -5,7 +5,7 @@ namespace DMJohnson\Contemplate\Tests\Template;
 use DMJohnson\Contemplate\Engine;
 use DMJohnson\Contemplate\Template\Theme;
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\{TestCase, Attributes\Test};
 
 final class ThemeTest extends TestCase
 {
@@ -16,16 +16,18 @@ final class ThemeTest extends TestCase
     /** @var \Throwable */
     private $exception;
 
-    /** @test */
-    public function engine_renders_with_single_themes() {
+    #[Test]
+    public function engine_renders_with_single_themes()
+    {
         $this->given_a_directory_structure_is_setup_like('templates', ['main.php' => '<html></html>']);
         $this->given_an_engine_is_created_with_theme(Theme::new($this->vfsPath('templates')));
         $this->when_the_engine_renders('main');
         $this->then_the_rendered_template_matches('<html></html>');
     }
 
-    /** @test */
-    public function engine_renders_with_theme_hierarchy() {
+    #[Test]
+    public function engine_renders_with_theme_hierarchy()
+    {
         $this->given_a_directory_structure_is_setup_like('templates', [
             'parent' => [
                 'main.php' => '<?php $this->layout("layout") ?>parent',
@@ -43,9 +45,10 @@ final class ThemeTest extends TestCase
         $this->then_the_rendered_template_matches('<html>child: parent</html>');
     }
 
-    /** @test */
-    public function duplicate_theme_names_in_hierarchies_are_not_allowed() {
-        $this->when_a_theme_is_created_like(function() {
+    #[Test]
+    public function duplicate_theme_names_in_hierarchies_are_not_allowed()
+    {
+        $this->when_a_theme_is_created_like(function () {
             Theme::hierarchy([
                 Theme::new('templates/a'),
                 Theme::new('templates/b'),
@@ -54,9 +57,10 @@ final class ThemeTest extends TestCase
         $this->then_an_exception_is_thrown_with_message('Duplicate theme names in hierarchies are not allowed. Received theme names: [Default, Default].');
     }
 
-    /** @test */
-    public function nested_hierarchies_are_not_allowed() {
-        $this->when_a_theme_is_created_like(function() {
+    #[Test]
+    public function nested_hierarchies_are_not_allowed()
+    {
+        $this->when_a_theme_is_created_like(function () {
             Theme::hierarchy([
                 Theme::hierarchy([Theme::new('templates', 'A'), Theme::new('templates', 'B')])
             ]);
@@ -64,16 +68,18 @@ final class ThemeTest extends TestCase
         $this->then_an_exception_is_thrown_with_message('Nested theme hierarchies are not allowed, make sure to use Theme::new when creating themes in your hierarchy. Theme B is already in a hierarchy.');
     }
 
-    /** @test */
-    public function empty_hierarchies_are_not_allowed() {
-        $this->when_a_theme_is_created_like(function() {
+    #[Test]
+    public function empty_hierarchies_are_not_allowed()
+    {
+        $this->when_a_theme_is_created_like(function () {
             Theme::hierarchy([]);
         });
         $this->then_an_exception_is_thrown_with_message('Empty theme hierarchies are not allowed.');
     }
 
-    /** @test */
-    public function template_not_found_errors_reference_themes_checked() {
+    #[Test]
+    public function template_not_found_errors_reference_themes_checked()
+    {
         $this->given_a_directory_structure_is_setup_like('templates', []);
         $this->given_an_engine_is_created_with_theme(Theme::hierarchy([
             Theme::new($this->vfsPath('templates/one'), 'One'),
@@ -83,7 +89,8 @@ final class ThemeTest extends TestCase
         $this->then_an_exception_is_thrown_with_message('The template "main" was not found in the following themes: Two:vfs://templates/two/main.php, One:vfs://templates/one/main.php');
     }
 
-    private function given_a_directory_structure_is_setup_like(string $rootDir, array $directoryStructure) {
+    private function given_a_directory_structure_is_setup_like(string $rootDir, array $directoryStructure)
+    {
         vfsStream::setup($rootDir);
         vfsStream::create($directoryStructure);
     }
@@ -92,7 +99,8 @@ final class ThemeTest extends TestCase
         $this->engine = \DMJohnson\Contemplate\Engine::fromTheme($theme);
     }
 
-    private function when_a_theme_is_created_like(callable $fn) {
+    private function when_a_theme_is_created_like(callable $fn)
+    {
         try {
             $fn();
         } catch (\Throwable $e) {
@@ -100,11 +108,13 @@ final class ThemeTest extends TestCase
         }
     }
 
-    private function vfsPath(string $path): string {
+    private function vfsPath(string $path): string
+    {
         return vfsStream::url($path);
     }
 
-    private function when_the_engine_renders(string $templateName, array $data = []) {
+    private function when_the_engine_renders(string $templateName, array $data = [])
+    {
         try {
             $this->result = $this->engine->render($templateName, $data);
         } catch (\Throwable $e) {
@@ -112,7 +122,8 @@ final class ThemeTest extends TestCase
         }
     }
 
-    private function then_the_rendered_template_matches(string $expected) {
+    private function then_the_rendered_template_matches(string $expected)
+    {
         if ($this->exception) {
             throw $this->exception;
         }
@@ -120,7 +131,8 @@ final class ThemeTest extends TestCase
         $this->assertEquals($expected, $this->result);
     }
 
-    private function then_an_exception_is_thrown_with_message(string $expectedMessage) {
+    private function then_an_exception_is_thrown_with_message(string $expectedMessage)
+    {
         $this->assertNotNull($this->exception, 'Expected an exception to be thrown with message: ' . $expectedMessage);
         $this->assertEquals($expectedMessage, $this->exception->getMessage(), 'Expected an exception to be thrown with message: ' . $expectedMessage);
     }
