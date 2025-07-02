@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DMJohnson\Contemplate\Tests\Template;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
 use DMJohnson\Contemplate\Template\Name;
 use DMJohnson\Contemplate\Template\Resolvable;
 use org\bovigo\vfs\vfsStream;
@@ -18,11 +19,16 @@ class ResolvableTest extends TestCase
     {
         vfsStream::setup('templates');
 
-        $engine = new Engine(vfsStream::url('templates'));
+        $engine = new Engine(new StackedFilesystemResolver(
+            [vfsStream::url('templates')],
+            [
+                '' => 'php',
+                Resolvable::TYPE_TEMPLATE => 'tpl.php',
+                Resolvable::TYPE_CONTROLLER_HTTP_GET => 'get.php',
+                Resolvable::TYPE_CONTROLLER_HTTP_POST => 'post.php',
+            ]
+        ));
         $engine->registerFunction('uppercase', 'strtoupper');
-        $engine->setFileExtension('tpl.php', Resolvable::TYPE_TEMPLATE);
-        $engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
-        $engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_HTTP_POST);
 
         $this->resolvable = new Resolvable($engine, 'resolvable');
     }
@@ -66,6 +72,12 @@ class ResolvableTest extends TestCase
 
     public function testGetPath()
     {
+        vfsStream::create(
+            array(
+                'resolvable.php' => '',
+            )
+        );
+
         $this->assertSame('vfs://templates/resolvable.php', $this->resolvable->path());
     }
 
@@ -123,6 +135,13 @@ class ResolvableTest extends TestCase
 
     public function testResolveAssociated()
     {
+        vfsStream::create(
+            array(
+                'resolvable.php' => '',
+                'resolvable.get.php' => '',
+            )
+        );
+        
         $other = $this->resolvable->resolveAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET);
         $this->assertSame('vfs://templates/resolvable.get.php', $other->path());
     }
@@ -131,6 +150,7 @@ class ResolvableTest extends TestCase
     {
         vfsStream::create(
             array(
+                'resolvable.php' => '',
                 'resolvable.tpl.php' => '',
             )
         );
@@ -142,6 +162,7 @@ class ResolvableTest extends TestCase
     {
         vfsStream::create(
             array(
+                'resolvable.php' => '',
                 'resolvable.tpl.php' => '',
             )
         );
@@ -153,6 +174,13 @@ class ResolvableTest extends TestCase
 
     public function testPathAssociated()
     {
+        vfsStream::create(
+            array(
+                'resolvable.php' => '',
+                'resolvable.get.php' => '',
+            )
+        );
+
         $this->assertSame('vfs://templates/resolvable.get.php', $this->resolvable->pathAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET));
     }
 
@@ -160,6 +188,7 @@ class ResolvableTest extends TestCase
     {
         vfsStream::create(
             array(
+                'resolvable.php' => '',
                 'resolvable.get.php' => '',
             )
         );
@@ -169,6 +198,12 @@ class ResolvableTest extends TestCase
 
     public function testDoesNotExistAssociated()
     {
+        vfsStream::create(
+            array(
+                'resolvable.php' => '',
+            )
+        );
+        
         $this->assertFalse($this->resolvable->existsAssociated(Resolvable::TYPE_CONTROLLER_HTTP_GET));
     }
 
@@ -176,6 +211,7 @@ class ResolvableTest extends TestCase
     {
         vfsStream::create(
             array(
+                'resolvable.php' => '',
                 'resolvable.tpl.php' => 'Hello!',
             )
         );
@@ -187,6 +223,7 @@ class ResolvableTest extends TestCase
     {
         vfsStream::create(
             array(
+                'resolvable.php' => '',
                 'resolvable.get.php' => '<?php return "Hello World";',
             )
         );

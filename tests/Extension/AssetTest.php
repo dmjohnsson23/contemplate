@@ -6,6 +6,7 @@ namespace DMJohnson\Contemplate\Tests\Extension;
 
 use DMJohnson\Contemplate\Engine;
 use DMJohnson\Contemplate\Extension\Asset;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,7 @@ class AssetTest extends TestCase
 
     public function testRegister()
     {
-        $engine = new Engine();
+        $engine = new Engine(new StackedFilesystemResolver([]));
         $extension = new Asset(vfsStream::url('assets'));
         $extension->register($engine);
         $this->assertTrue($engine->doesFunctionExist('asset'));

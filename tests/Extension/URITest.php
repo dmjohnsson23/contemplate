@@ -6,6 +6,7 @@ namespace DMJohnson\Contemplate\Tests\Extension;
 
 use DMJohnson\Contemplate\Engine;
 use DMJohnson\Contemplate\Extension\URI;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
 use PHPUnit\Framework\TestCase;
 
 class URITest extends TestCase
@@ -24,7 +25,7 @@ class URITest extends TestCase
 
     public function testRegister()
     {
-        $engine = new Engine();
+        $engine = new Engine(new StackedFilesystemResolver([]));
         $extension = new URI('/green/red/blue');
         $extension->register($engine);
         $this->assertTrue($engine->doesFunctionExist('uri'));
@@ -93,7 +94,7 @@ class URITest extends TestCase
 
     public function testFetchNonExistingUriIndex()
     {
-        $engine = new Engine();
+        $engine = new Engine(new StackedFilesystemResolver([]));
         $extension = new URI('/');
         $extension->register($engine);
         $this->assertTrue(is_null($extension->runUri(2)));
@@ -101,7 +102,7 @@ class URITest extends TestCase
 
     public function testComparehNonExistingUriIndex()
     {
-        $engine = new Engine();
+        $engine = new Engine(new StackedFilesystemResolver([]));
         $extension = new URI('/hello');
         $extension->register($engine);
         $this->assertFalse($extension->runUri(2, 'hello'));

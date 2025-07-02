@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DMJohnson\Contemplate\Tests\Template;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
 use DMJohnson\Contemplate\Template\Controller;
 use DMJohnson\Contemplate\Template\Resolvable;
 use org\bovigo\vfs\vfsStream;
@@ -18,10 +19,15 @@ class ControllerTest extends TestCase
     {
         vfsStream::setup('templates');
 
-        $engine = new Engine(vfsStream::url('templates'));
-        $engine->setFileExtension('delegate.php', Resolvable::TYPE_CONTROLLER_DELEGATE);
-        $engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
-        $engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_HTTP_POST);
+        $engine = new Engine(new StackedFilesystemResolver(
+            [vfsStream::url('templates')],
+            [
+                '' => 'php',
+                Resolvable::TYPE_CONTROLLER_DELEGATE => 'delegate.php',
+                Resolvable::TYPE_CONTROLLER_HTTP_GET => 'get.php',
+                Resolvable::TYPE_CONTROLLER_HTTP_POST => 'post.php',
+            ]
+        ));
 
         $this->controller = new Controller($engine, 'controller');
     }

@@ -3,27 +3,55 @@ Contemplate
 
 "Contemplate" is short for "Controllers and Templates". It is somewhat more than a mere templating library, but a great deal less than a full web framework. It is primarily intended as a progressive enhancement library to gradually bring a standalone (meaning "sans-framework") legacy PHP application into the modern era. It is designed to require minimal refactoring to being using, to allow legacy PHP code to continue to operate beside it. It aims to be flexible enough to allow you to gradually work toward a place similar to what you'd get with a full PHP framework--PSR7, routing, and so forth--without actually *requiring* any of these things to begin using.
 
-This is an extended fork of [Plates](https://github.com/thephpleague/plates) that adds support for additional functionality, such as:
+This is an heavilly modified fork of [Plates](https://github.com/thephpleague/plates) that adds support for additional functionality, such as:
 
 * Loading controllers (or, any arbitrary function or object) using the same loader used to load templates.
 * Loading static resources (but *not* public web assets...for now) using the same loader used to load templates.
 * Name-based associations between templates, controllers, and resources.
 * An optional extension adding integration with [Twig](https://twig.symfony.com)
 
-Plates is a very handy little project, but doesn't appear to be receiving new features or responding to pull requests. Contemplate is a drop-in replacement for Plates; you should be able to simply change the import, and everything should "just work" so long as you don't have any custom template functions whose names interfere with new methods added by Contemplate. You can then add additional features over time using Contemplate's extended functionality.
+Plates is a very handy little project, but doesn't appear to be receiving new features or responding to pull requests. Contemplate is **not** a drop-in replacement for Plates; the original loader code from Plates has been completely replaced. The new loader is able to load resources other than templates. It is also more flexible than the original loader, taking inspiration from Twig.
 
-Loading controllers and resources via the template loader system has a few advantages:
-
-* Organization: it's nice to have all the code for a request live close together in your project structure.
-* Extensibility and modularity: Using Themes, you can override the functionality of certain controllers or resources for a specific theme, but fall back to the base theme if an override does not exist.
+Other than loader-related operations, everything else should still be drop-in compatible with the original project.
 
 ## Documentation
 
 The original documentation for Plates can be found at [platesphp.com](https://platesphp.com/). Additional documentation for Contemplate-specific features will be forthcoming, but a brief overview of the differences can be found below.
 
-First, `Template` has been generalized to `Resolvable`. `Resolvable` can be used as a base class for loading other types of resources (controllers or static resources). `Template` is a subclass of `Resolvable`.
+### Contemplate Resolver
 
-Second, many methods now take an optional `type` parameter. This parameter is a string used to specify which type of resource to resolve. For example, you may have a directory structure like this for your templates and other resources:
+Folders and Themes have been completely removed from Plates, and have been replaced with a flexible `Resolver` interface which can be easilly customized to load from other sources.
+
+The system comes with one resolver built-in: the `StackedFilesystemResolver`. This is conceptuallly similar to Plate's original Theme-based resolver, but with added features.
+
+The resolver is passed as the first and only argument to the engine:
+
+```php
+$engine = new Engine(new StackedFilesystemResolver(
+    [
+        // The resolver will sequentially search each of these directories (themes) until 
+        // it finds a matching resource
+        'base' => '/templates/base',
+        'app' => '/templates/app',
+        'overrides' => '/templates/overrides',
+    ],
+    [
+        // Since the new loader supports loading multiple different resource types, we can
+        // specify a different file extension for each type. The extension assicaited with 
+        // the empty string will be used if the loader is invoked without specifying a type.
+        '' => 'php',
+        Resolvable::TYPE_TEMPLATE => 'tpl.php',
+        Resolvable::TYPE_CONTROLLER_HTTP_GET => 'get.php',
+        Resolvable::TYPE_CONTROLLER_HTTP_POST => 'post.php',
+        // Arbitrary type strings are also allowed
+        'markdown' => 'md',
+    ]
+));
+```
+
+No changes are needed when loading a template, the standard Plates functions like `$engine->make` and `$engine->render` will automatically set the resource type to `Resolvable::TYPE_TEMPLATE`. However, additional resource types can be loaded using new methods like `$engine->import` and `$engine->callController`.
+
+For example, if the structure of the templates folder looks like this:
 
 ```
 app
@@ -35,23 +63,6 @@ app
 +-- some_article.get.php
 +-- some_article.tpl.php
 +-- some_article.md
-```
-
-This structure represents a theoretical site with three pages: index, some_form, and some_article. However, each of these pages has multiple different resolvable resources associated with it. All three have a template (`x.tpl.php`) and a controller for GET requests (`x.get.php`). The form has an additional controller for POST requests (`some_form.post.php`), and the article contains some content in a markdown document (`some_article.md`).
-
-You can associate these different types of resolvable objects with different file extensions:
-
-```php
-// The default file extension for unknown or unspecified types
-$engine->setFileExtension('php');
-// File extensions for special built-in types
-// Using these types is optional, but provides some additional features for convenience
-$engine->setFileExtension('tpl.php', Resolvable::TYPE_TEMPLATE);
-$engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
-$engine->setFileExtension('post.php', Resolvable::TYPE_CONTROLLER_HTTP_POST);
-// Custom extensions for custom types
-// These names are arbitrary--you can use whatever makes sense for your application
-$engine->setFileExtension('md', 'markdown');
 ```
 
 Then, when interacting with the engine to resolve objects, you can specify the relevant type either implicitly or explicitly to resolve different objects:

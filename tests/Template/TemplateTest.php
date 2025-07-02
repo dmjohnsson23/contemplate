@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace DMJohnson\Contemplate\Tests\Template;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
+use DMJohnson\Contemplate\Template\Resolvable;
 use DMJohnson\Contemplate\Template\Template;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +19,10 @@ class TemplateTest extends TestCase
     {
         vfsStream::setup('templates');
 
-        $engine = new Engine(vfsStream::url('templates'));
+        $engine = new Engine(new StackedFilesystemResolver(
+            [vfsStream::url('templates')], 
+            [Resolvable::TYPE_TEMPLATE=>'php']
+        ));
         $engine->registerFunction('uppercase', 'strtoupper');
 
         $this->template = new Template($engine, 'template');

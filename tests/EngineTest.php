@@ -3,6 +3,7 @@
 namespace DMJohnson\Contemplate\Tests;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
 use DMJohnson\Contemplate\Template\Resolvable;
 use DMJohnson\Contemplate\Template\Template;
 use org\bovigo\vfs\vfsStream;
@@ -15,103 +16,19 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     {
         vfsStream::setup('templates');
 
-        $this->engine = new Engine(vfsStream::url('templates'));
+        $this->engine = new Engine(new StackedFilesystemResolver(
+            [vfsStream::url('templates')],
+            [
+                '' => 'php',
+                Resolvable::TYPE_TEMPLATE => 'tpl.php',
+                Resolvable::TYPE_CONTROLLER_HTTP_GET => 'get.php',
+            ]
+        ));
     }
 
     public function testCanCreateInstance()
     {
         $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine);
-    }
-
-    public function testSetDirectory()
-    {
-        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setDirectory(vfsStream::url('templates')));
-        $this->assertSame(vfsStream::url('templates'), $this->engine->getDirectory());
-    }
-
-    public function testSetNullDirectory()
-    {
-        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setDirectory(null));
-        $this->assertNull($this->engine->getDirectory());
-    }
-
-    public function testSetInvalidDirectory()
-    {
-        // The specified path "vfs://does/not/exist" does not exist.
-        $this->expectException(\LogicException::class);
-        $this->engine->setDirectory(vfsStream::url('does/not/exist'));
-    }
-
-    public function testGetDirectory()
-    {
-        $this->assertSame(vfsStream::url('templates'), $this->engine->getDirectory());
-    }
-
-    public function testSetFileExtension()
-    {
-        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setFileExtension('tpl'));
-        $this->assertSame('tpl', $this->engine->getFileExtension());
-    }
-
-    public function testSetNullFileExtension()
-    {
-        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->setFileExtension(null));
-        $this->assertNull($this->engine->getFileExtension());
-    }
-
-    public function testGetFileExtension()
-    {
-        $this->assertSame('php', $this->engine->getFileExtension());
-    }
-
-    public function testAddFolder()
-    {
-        vfsStream::create(
-            array(
-                'folder' => array(
-                    'template.php' => '',
-                ),
-            )
-        );
-
-        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->addFolder('folder', vfsStream::url('templates/folder')));
-        $this->assertSame('vfs://templates/folder', $this->engine->getFolders()->get('folder')->getPath());
-    }
-
-    public function testAddFolderWithNamespaceConflict()
-    {
-        // The template folder "name" is already being used.
-        $this->expectException(\LogicException::class);
-        $this->engine->addFolder('name', vfsStream::url('templates'));
-        $this->engine->addFolder('name', vfsStream::url('templates'));
-    }
-
-    public function testAddFolderWithInvalidDirectory()
-    {
-        // The specified directory path "vfs://does/not/exist" does not exist.
-        $this->expectException(\LogicException::class);
-        $this->engine->addFolder('namespace', vfsStream::url('does/not/exist'));
-    }
-
-    public function testRemoveFolder()
-    {
-        vfsStream::create(
-            array(
-                'folder' => array(
-                    'template.php' => '',
-                ),
-            )
-        );
-
-        $this->engine->addFolder('folder', vfsStream::url('templates/folder'));
-        $this->assertTrue($this->engine->getFolders()->exists('folder'));
-        $this->assertInstanceOf('DMJohnson\Contemplate\Engine', $this->engine->removeFolder('folder'));
-        $this->assertFalse($this->engine->getFolders()->exists('folder'));
-    }
-
-    public function testGetFolders()
-    {
-        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Folders', $this->engine->getFolders());
     }
 
     public function testAddData()
@@ -238,6 +155,12 @@ class EngineTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTemplatePath()
     {
+        vfsStream::create(
+            array(
+                'template.php' => '',
+            )
+        );
+
         $this->assertSame('vfs://templates/template.php', $this->engine->path('template'));
     }
 
@@ -258,7 +181,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     {
         vfsStream::create(
             array(
-                'template.php' => '',
+                'template.tpl.php' => '',
             )
         );
 
@@ -269,7 +192,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     {
         vfsStream::create(
             array(
-                'template.php' => '',
+                'template.tpl.php' => '',
             )
         );
 
@@ -282,7 +205,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase
     {
         vfsStream::create(
             array(
-                'template.php' => 'Hello!',
+                'template.tpl.php' => 'Hello!',
             )
         );
 
@@ -307,7 +230,6 @@ class EngineTest extends \PHPUnit\Framework\TestCase
                 'controller.get.php' => '<?php return function(){return "Hello!";};',
             )
         );
-        $this->engine->setFileExtension('get.php', Resolvable::TYPE_CONTROLLER_HTTP_GET);
 
         $this->assertSame('Hello!', $this->engine->autoCallHttpController('controller', [], 'get'));
     }

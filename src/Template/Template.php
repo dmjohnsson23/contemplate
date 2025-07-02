@@ -122,16 +122,13 @@ class Template extends Resolvable
     public function render(array $data = array())
     {
         $this->data($data);
-        $path = ($this->engine->getResolveTemplatePath())($this->name);
+        $resolved = $this->engine->resolver->resolveName($this->name);
 
         try {
             $level = ob_get_level();
             ob_start();
 
-            (function() {
-                extract($this->data);
-                include func_get_arg(0);
-            })($path);
+            $resolved->importAsPhp($this->data, $this);
 
             $content = ob_get_clean();
 

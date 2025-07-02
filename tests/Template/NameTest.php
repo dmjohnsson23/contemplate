@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DMJohnson\Contemplate\Tests\Template;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Resolver\StackedFilesystemResolver;
 use DMJohnson\Contemplate\Template\Name;
 use DMJohnson\Contemplate\Template\Resolvable;
 use org\bovigo\vfs\vfsStream;
@@ -20,15 +21,23 @@ class NameTest extends TestCase
         vfsStream::create(
             array(
                 'template.php' => '',
-                'fallback.php' => '',
                 'folder' => array(
                     'template.php' => '',
                 ),
+                'fallbacks' => array(
+                    'fallback.php' => '',
+                )
             )
         );
 
-        $this->engine = new Engine(vfsStream::url('templates'));
-        $this->engine->addFolder('folder', vfsStream::url('templates/folder'), true);
+        $this->engine = new Engine(new StackedFilesystemResolver(
+            [
+                '' => vfsStream::url('templates'),
+                'folder' => vfsStream::url('templates/folder'),
+                'fallbacks' => vfsStream::url('templates/fallbacks'),
+            ],
+            ['' => 'php']
+        ));
     }
 
     public function testCanCreateInstance()
@@ -50,22 +59,6 @@ class NameTest extends TestCase
         $this->assertSame('template', $name->getName());
     }
 
-    public function testGetFolder()
-    {
-        $name = new Name($this->engine, 'folder::template');
-        $folder = $name->getFolder();
-
-        $this->assertInstanceOf('DMJohnson\Contemplate\Template\Folder', $folder);
-        $this->assertSame('folder', $name->getFolder()->getName());
-    }
-
-    public function testGetFile()
-    {
-        $name = new Name($this->engine, 'template');
-
-        $this->assertSame('template.php', $name->getFile());
-    }
-
     public function testGetPath()
     {
         $name = new Name($this->engine, 'template');
@@ -84,7 +77,7 @@ class NameTest extends TestCase
     {
         $name = new Name($this->engine, 'folder::fallback');
 
-        $this->assertSame('vfs://templates/fallback.php', $name->getPath());
+        $this->assertSame('vfs://templates/fallbacks/fallback.php', $name->getPath());
     }
 
     public function testTemplateExists()
@@ -106,18 +99,6 @@ class NameTest extends TestCase
         $name = new Name($this->engine, 'template');
 
         $this->assertSame('template', $name->getName());
-        $this->assertNull($name->getFolder());
-        $this->assertSame('template.php', $name->getFile());
-    }
-
-    public function testParseWithNoDefaultDirectory()
-    {
-        // The default directory has not been defined.
-        $this->expectException(\LogicException::class);
-
-        $this->engine->setDirectory(null);
-        $name = new Name($this->engine, 'template');
-        $name->getPath();
     }
 
     public function testParseWithEmptyTemplateName()
@@ -133,45 +114,5 @@ class NameTest extends TestCase
         $name = new Name($this->engine, 'folder::template');
 
         $this->assertSame('folder::template', $name->getName());
-        $this->assertSame('folder', $name->getFolder()->getName());
-        $this->assertSame('template.php', $name->getFile());
-    }
-
-    public function testParseWithFolderAndEmptyTemplateName()
-    {
-        // The template name cannot be empty.
-        $this->expectException(\LogicException::class);
-
-        $name = new Name($this->engine, 'folder::');
-    }
-
-    public function testParseWithInvalidName()
-    {
-        // Do not use the folder namespace separator "::" more than once.
-        $this->expectException(\LogicException::class);
-
-        $name = new Name($this->engine, 'folder::template::wrong');
-    }
-
-    public function testParseWithNoFileExtension()
-    {
-        $this->engine->setFileExtension(null);
-
-        $name = new Name($this->engine, 'template.php');
-
-        $this->assertSame('template.php', $name->getName());
-        $this->assertNull($name->getFolder());
-        $this->assertSame('template.php', $name->getFile());
-    }
-
-    public function testParseWithTypedFileExtension()
-    {
-        $this->engine->setFileExtension('tpl', Resolvable::TYPE_TEMPLATE);
-
-        $name = new Name($this->engine, 'template', Resolvable::TYPE_TEMPLATE);
-
-        $this->assertSame('template', $name->getName());
-        $this->assertNull($name->getFolder());
-        $this->assertSame('template.tpl', $name->getFile());
     }
 }

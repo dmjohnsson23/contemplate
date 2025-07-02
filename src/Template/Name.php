@@ -3,6 +3,7 @@
 namespace DMJohnson\Contemplate\Template;
 
 use DMJohnson\Contemplate\Engine;
+use DMJohnson\Contemplate\Exception\TemplateNotFound;
 use LogicException;
 
 /**
@@ -23,10 +24,10 @@ class Name
     protected $name;
 
     /**
-     * The parsed template folder.
-     * @var Folder
+     * The resource type.
+     * @var ?string
      */
-    protected $folder;
+    protected $type;
 
     /**
      * The parsed template filename.
@@ -79,21 +80,9 @@ class Name
      */
     public function setName($name, $type=null)
     {
+        if ($name === '') throw new LogicException('Name cannot be empty');
         $this->name = $name;
-
-        $parts = explode('::', $this->name);
-
-        if (count($parts) === 1) {
-            $this->setFile($parts[0], $type);
-        } elseif (count($parts) === 2) {
-            $this->setFolder($parts[0]);
-            $this->setFile($parts[1], $type);
-        } else {
-            throw new LogicException(
-                'The template name "' . $this->name . '" is not valid. ' .
-                'Do not use the folder namespace separator "::" more than once.'
-            );
-        }
+        $this->type = $type;
 
         return $this;
     }
@@ -108,59 +97,12 @@ class Name
     }
 
     /**
-     * Set the parsed template folder.
-     * @param  string $folder
-     * @return Name
-     */
-    public function setFolder($folder)
-    {
-        $this->folder = $this->engine->getFolders()->get($folder);
-
-        return $this;
-    }
-
-    /**
-     * Get the parsed template folder.
-     * @return Folder
-     */
-    public function getFolder()
-    {
-        return $this->folder;
-    }
-
-    /**
-     * Set the parsed template file.
-     * @param  string $file
-     * @param string|null $type An optional value specifying the type of object to resolve. This 
-     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
-     * template, multiple controllers, static resources, etc...).
-     * @return Name
-     */
-    public function setFile($file, $type=null)
-    {
-        if ($file === '') {
-            throw new LogicException(
-                'The template name "' . $this->name . '" is not valid. ' .
-                'The template name cannot be empty.'
-            );
-        }
-
-        $this->file = $file;
-
-        if (!is_null($this->engine->getFileExtension($type))) {
-            $this->file .= '.' . $this->engine->getFileExtension($type);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the parsed template file.
+     * Get the type.
      * @return string
      */
-    public function getFile()
+    public function getType()
     {
-        return $this->file;
+        return $this->type;
     }
 
     /**
@@ -169,21 +111,7 @@ class Name
      */
     public function getPath()
     {
-        if (is_null($this->folder)) {
-            return "{$this->getDefaultDirectory()}/{$this->file}";
-        }
-
-        $path = "{$this->folder->getPath()}/{$this->file}";
-
-        if (
-            !is_file($path)
-            && $this->folder->getFallback()
-            && is_file("{$this->getDefaultDirectory()}/{$this->file}")
-        ) {
-            $path = "{$this->getDefaultDirectory()}/{$this->file}";
-        }
-
-        return $path;
+        return $this->engine->resolver->resolve($this->name, $this->type)->getOpenPath();
     }
 
     /**
@@ -192,24 +120,12 @@ class Name
      */
     public function doesPathExist()
     {
-        return is_file($this->getPath());
-    }
-
-    /**
-     * Get the default templates directory.
-     * @return string
-     */
-    protected function getDefaultDirectory()
-    {
-        $directory = $this->engine->getDirectory();
-
-        if (is_null($directory)) {
-            throw new LogicException(
-                'The template name "' . $this->name . '" is not valid. '.
-                'The default directory has not been defined.'
-            );
+        try{
+            $this->engine->resolver->resolve($this->name, $this->type);
+            return true;
         }
-
-        return $directory;
+        catch (TemplateNotFound){
+            return false;
+        }
     }
 }

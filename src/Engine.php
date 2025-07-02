@@ -2,7 +2,9 @@
 
 namespace DMJohnson\Contemplate;
 
+use DMJohnson\Contemplate\Exception\TemplateNotFound;
 use DMJohnson\Contemplate\Extension\ExtensionInterface;
+use DMJohnson\Contemplate\Resolver\Resolver;
 use DMJohnson\Contemplate\Template\Controller;
 use DMJohnson\Contemplate\Template\Data;
 use DMJohnson\Contemplate\Template\Directory;
@@ -22,24 +24,6 @@ use DMJohnson\Contemplate\Template\Theme;
 class Engine
 {
     /**
-     * Default template directory.
-     * @var Directory
-     */
-    protected $directory;
-
-    /**
-     * Template file extension.
-     * @var FileExtension
-     */
-    protected $fileExtension;
-
-    /**
-     * Collection of template folders.
-     * @var Folders
-     */
-    protected $folders;
-
-    /**
      * Collection of template functions.
      * @var Functions
      */
@@ -51,123 +35,15 @@ class Engine
      */
     protected $data;
 
-    /** @var ResolveTemplatePath */
-    private $resolveTemplatePath;
-
     /**
      * Create new Engine instance.
      * @param string $directory
      * @param string $fileExtension
      */
-    public function __construct($directory = null, $fileExtension = 'php')
+    public function __construct(public readonly Resolver $resolver)
     {
-        $this->directory = new Directory($directory);
-        $this->fileExtension = new FileExtension($fileExtension);
-        $this->folders = new Folders();
         $this->functions = new Functions();
         $this->data = new Data();
-        $this->resolveTemplatePath = new ResolveTemplatePath\NameAndFolderResolveTemplatePath();
-    }
-
-    public static function fromTheme(Theme $theme, string $fileExtension = 'php'): self {
-        $engine = new static(null, $fileExtension);
-        $engine->setResolveTemplatePath(new ResolveTemplatePath\ThemeResolveTemplatePath($theme));
-        return $engine;
-    }
-
-    public function setResolveTemplatePath(ResolveTemplatePath $resolveTemplatePath)
-    {
-        $this->resolveTemplatePath = $resolveTemplatePath;
-
-        return $this;
-    }
-
-    public function getResolveTemplatePath(): ResolveTemplatePath
-    {
-        return $this->resolveTemplatePath;
-    }
-
-    /**
-     * Set path to templates directory.
-     * @param  string|null $directory Pass null to disable the default directory.
-     * @return Engine
-     */
-    public function setDirectory($directory)
-    {
-        $this->directory->set($directory);
-
-        return $this;
-    }
-
-    /**
-     * Get path to templates directory.
-     * @return string
-     */
-    public function getDirectory()
-    {
-        return $this->directory->get();
-    }
-
-    /**
-     * Set the template file extension.
-     * @param  string|null $fileExtension Pass null to manually set it.
-     * @param string|null $type An optional value specifying the type of object to resolve. This 
-     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
-     * template, multiple controllers, static resources, etc...).
-     * @return Engine
-     */
-    public function setFileExtension($fileExtension, $type=null)
-    {
-        $this->fileExtension->set($fileExtension, $type);
-
-        return $this;
-    }
-
-    /**
-     * Get the template file extension.
-     * @param string|null $type An optional value specifying the type of object to resolve. This 
-     * is used to allow multiple types of `Resolvable`s to exist under the same name (e.g. a 
-     * template, multiple controllers, static resources, etc...).
-     * @return string
-     */
-    public function getFileExtension($type=null)
-    {
-        return $this->fileExtension->get($type);
-    }
-
-    /**
-     * Add a new template folder for grouping templates under different namespaces.
-     * @param  string  $name
-     * @param  string  $directory
-     * @param  boolean $fallback
-     * @return Engine
-     */
-    public function addFolder($name, $directory, $fallback = false)
-    {
-        $this->folders->add($name, $directory, $fallback);
-
-        return $this;
-    }
-
-    /**
-     * Remove a template folder.
-     * @param  string $name
-     * @return Engine
-     */
-    public function removeFolder($name)
-    {
-        $this->folders->remove($name);
-
-        return $this;
-    }
-
-    /**
-     * Get collection of all template folders.
-     * @return Folders
-     */
-    public function getFolders()
-    {
-        return $this->folders;
     }
 
     /**
@@ -290,9 +166,9 @@ class Engine
      */
     public function path($name, $type = null)
     {
-        $name = new Name($this, $name, $type);
+        $resolved = $this->resolver->resolve($name, $type);
 
-        return $name->getPath();
+        return $resolved->getOpenPath();
     }
 
     /**
@@ -305,9 +181,13 @@ class Engine
      */
     public function exists($name, $type = null)
     {
-        $name = new Name($this, $name, $type);
-
-        return $name->doesPathExist();
+        try{
+            $this->resolver->resolve($name, $type);
+            return true;
+        }
+        catch (TemplateNotFound){
+            return false;
+        }
     }
 
     /**
@@ -426,6 +306,7 @@ class Engine
         else {
             $type = $req_method;
         }
+        var_dump($req_method, $type);
         return $this->makeController($name, $type)->call($params);
     }
 }

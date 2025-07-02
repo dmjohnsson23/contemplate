@@ -90,7 +90,7 @@ class Resolvable
     public function exists()
     {
         try {
-            ($this->engine->getResolveTemplatePath())($this->name);
+            $this->engine->resolver->resolveName($this->name);
             return true;
         } catch (TemplateNotFound $e) {
             return false;
@@ -104,7 +104,7 @@ class Resolvable
     public function path()
     {
         try {
-            return ($this->engine->getResolveTemplatePath())($this->name);
+            return $this->engine->resolver->resolveName($this->name)->getOpenPath();
         } catch (TemplateNotFound $e) {
             return $e->paths()[0];
         }
@@ -116,11 +116,7 @@ class Resolvable
      */
     public function import($params=[])
     {
-        $path = ($this->engine->getResolveTemplatePath())($this->name);
-        return (function() { // Wrap in function call to ensure "pure" scope
-            \extract(\func_get_arg(1));
-            return require(\func_get_arg(0));
-        })($path, $params);
+        return $this->engine->resolver->resolveName($this->name)->importAsPhp($params, $this);
     }
 
     /**
