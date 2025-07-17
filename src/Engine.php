@@ -306,7 +306,6 @@ class Engine
         else {
             $type = $req_method;
         }
-        var_dump($req_method, $type);
         return $this->makeController($name, $type)->call($params);
     }
 }

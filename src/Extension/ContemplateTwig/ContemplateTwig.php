@@ -45,7 +45,6 @@ class ContemplateTwig implements ExtensionInterface
         $this->twig->addGlobal('contemplate', $engine);
         $engine->registerFunction('renderTwig', [$this, 'render']);
         $engine->registerFunction('renderTwigBlock', [$this, 'renderBlock']);
-        $engine->setFileExtension('twig', ContemplateTwig::RESOLVABLE_TYPE_TWIG_TEMPLATE);
     }
 
     public function render(string $name, array $data = array())
