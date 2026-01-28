@@ -11,9 +11,8 @@ use ReflectionObject;
 /**
  * An attribute used to add additional functionality to a controller.
  * 
- * Extend this class and overwrite the `__invoke` method.
+ * Extend this class and overwrite the `__invoke` method. Be sure to use the `Attribute` attribute.
  */
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_FUNCTION | Attribute::IS_REPEATABLE)]
 abstract class ControllerDecorator{
     /**
      * Called to wrap the controller
